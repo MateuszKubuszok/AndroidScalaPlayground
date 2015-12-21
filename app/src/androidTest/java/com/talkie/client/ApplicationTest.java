@@ -1,4 +1,4 @@
-package talkie.com.talkie;
+package com.talkie.client;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

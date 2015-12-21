@@ -1,4 +1,4 @@
-package talkie.com.talkie;
+package com.talkie.client;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
