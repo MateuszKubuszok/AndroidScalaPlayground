@@ -1,16 +1,29 @@
 apply plugin: 'com.android.application'
+apply plugin: "jp.leafytree.android-scala"
 
 android {
   compileSdkVersion 23
-  buildToolsVersion "19.1.0"
+  buildToolsVersion "22.0.1"
 
   defaultConfig {
     applicationId "com.talkie.client"
-    minSdkVersion 10
+    multiDexEnabled true
+    testInstrumentationRunner "com.android.test.runner.MultiDexTestRunner"
     targetSdkVersion 23
     versionCode 1
     versionName "1.0"
   }
+
+  productFlavors {
+    dev {
+      minSdkVersion 21 // To reduce compilation time
+    }
+
+    prod {
+      minSdkVersion 10
+    }
+  }
+
   buildTypes {
     release {
       minifyEnabled false
@@ -19,9 +32,21 @@ android {
   }
 }
 
+tasks.withType(ScalaCompile) {
+  // If you want to use scala compile daemon
+  scalaCompileOptions.useCompileDaemon = true
+  // Suppress deprecation warnings
+  scalaCompileOptions.deprecation = false
+  // Additional parameters
+  scalaCompileOptions.additionalParameters = ["-feature"]
+}
+
 dependencies {
   compile fileTree(dir: 'libs', include: ['*.jar'])
   testCompile 'junit:junit:4.12'
   compile 'com.android.support:appcompat-v7:23.1.1'
   compile 'com.android.support:design:23.1.1'
+  compile "com.android.support:multidex:1.0.1"
+  androidTestCompile "com.android.support:multidex-instrumentation:1.0.1", { exclude module: "multidex" }
+  compile 'org.scala-lang:scala-library:2.11.7'
 }
