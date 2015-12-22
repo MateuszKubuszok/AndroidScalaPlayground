@@ -14,14 +14,10 @@ android {
     versionName "1.0"
   }
 
+  // To reduce compilation time (multidex works fastest with 21)
   productFlavors {
-    dev {
-      minSdkVersion 21 // To reduce compilation time
-    }
-
-    prod {
-      minSdkVersion 10
-    }
+    dev { minSdkVersion 21 }
+    prod { minSdkVersion 15 }
   }
 
   buildTypes {
@@ -33,12 +29,12 @@ android {
 }
 
 tasks.withType(ScalaCompile) {
-  // If you want to use scala compile daemon
   scalaCompileOptions.useCompileDaemon = true
-  // Suppress deprecation warnings
   scalaCompileOptions.deprecation = false
-  // Additional parameters
-  scalaCompileOptions.additionalParameters = ["-feature"]
+  scalaCompileOptions.additionalParameters = [
+    "-feature",
+    "-language:postfixOps"
+  ]
 }
 
 dependencies {
@@ -49,4 +45,5 @@ dependencies {
   compile "com.android.support:multidex:1.0.1"
   androidTestCompile "com.android.support:multidex-instrumentation:1.0.1", { exclude module: "multidex" }
   compile 'org.scala-lang:scala-library:2.11.7'
+  compile 'com.facebook.android:facebook-android-sdk:4.8.2'
 }
