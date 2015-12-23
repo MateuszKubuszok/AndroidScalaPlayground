@@ -1,4 +1,4 @@
-package com.talkie.client.common
+package com.talkie.client.views
 
 import android.app.Activity
 import android.support.design.widget.{FloatingActionButton, NavigationView}
@@ -8,7 +8,7 @@ import android.view.View
 import com.facebook.login.widget.LoginButton
 import com.talkie.client.R
 
-private[common] sealed trait Views {
+private[views] sealed trait Views {
 
   protected def findView[T](id: Int): Option[T]
 

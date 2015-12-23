@@ -1,11 +1,10 @@
-package com.talkie.client.facebook
+package com.talkie.client.initialization
 
 import android.app.Activity
 import android.os.Bundle
 import com.facebook.FacebookSdk
-import com.talkie.client.common.ActivityViews
 
-trait FacebookInitializer extends Activity with ActivityViews {
+trait FacebookInitializer extends Activity {
 
   protected override def onCreate(savedInstanceState: Bundle) {
     super.onCreate(savedInstanceState)

@@ -1,17 +1,18 @@
-package com.talkie.client
+package com.talkie.client.activities
 
 import android.os.Bundle
 import android.support.design.widget.{NavigationView, Snackbar}
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.{ActionBarDrawerToggle, AppCompatActivity}
 import android.view.{Menu, MenuItem}
-import com.talkie.client.common.{ActivityViews, ListenerUtils}
+import com.talkie.client.R
+import com.talkie.client.views.{Listeners, ActivityViews}
 
 class MainActivity
     extends AppCompatActivity
     with NavigationView.OnNavigationItemSelectedListener
     with ActivityViews
-    with ListenerUtils {
+    with Listeners {
 
   override def onCreate(savedInstanceState: Bundle) {
     super.onCreate(savedInstanceState)

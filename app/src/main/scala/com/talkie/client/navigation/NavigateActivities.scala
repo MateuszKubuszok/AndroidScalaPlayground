@@ -1,10 +1,11 @@
-package com.talkie.client.common
+package com.talkie.client.navigation
 
 import android.app.Activity
 import android.content.Intent
-import com.talkie.client.{LoginActivity, MainActivity}
+import com.talkie.client.activities.{ LoginActivity, MainActivity }
 
-trait NavigationUtils extends Activity {
+trait NavigateActivities {
+  self: Activity =>
 
   protected def loginActivity() = new Intent(this, classOf[LoginActivity])
 

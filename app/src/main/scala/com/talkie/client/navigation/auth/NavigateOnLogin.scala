@@ -1,9 +1,14 @@
-package com.talkie.client.facebook
+package com.talkie.client.navigation.auth
 
+import android.app.Activity
 import android.content.Intent
-import com.talkie.client.common.TalkieActivity
+import com.talkie.client.navigation.NavigateActivities
+import com.talkie.client.services.LoggerComponent
 
-trait FacebookActivity extends TalkieActivity {
+trait NavigateOnLogin {
+  self: Activity
+   with LoggerComponent
+   with NavigateActivities =>
 
   private val Extra_ActivityAfterLogin = "activity_after_login"
 
@@ -14,10 +19,5 @@ trait FacebookActivity extends TalkieActivity {
   protected def returnFromLoginActivity() = {
     logger trace s"FB login succeeded, now into ${getIntent.getComponent.getClassName}"
     startActivity(getIntent.getParcelableExtra[Intent](Extra_ActivityAfterLogin))
-  }
-
-  protected def isLoggedIn: Boolean = {
-    // TODO: implement
-    false
   }
 }

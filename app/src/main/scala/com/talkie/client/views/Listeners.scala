@@ -1,11 +1,12 @@
-package com.talkie.client.common
+package com.talkie.client.views
 
 import android.view.View
 import android.view.View.OnClickListener
 
-trait ListenerUtils {
+trait Listeners {
 
   protected def makeOnClickListener(action: View => Unit) = new OnClickListener {
+
     override def onClick(view: View): Unit = action(view)
   }
 
