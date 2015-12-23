@@ -18,7 +18,7 @@ trait MainController extends Controller {
 
   private implicit val c = context
 
-  final protected def onCreateEvent() {
+  final protected def onCreateEvent() = {
     setContentView(R.layout.activity_main)
 
     toolbarOpt foreach setSupportActionBar

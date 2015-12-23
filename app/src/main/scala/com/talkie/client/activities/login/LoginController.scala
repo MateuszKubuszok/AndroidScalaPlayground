@@ -18,14 +18,14 @@ trait LoginController extends Controller {
     setContentView(R.layout.activity_login)
   }
 
-  final protected def onPostCreateEvent() {
+  final protected def onPostCreateEvent() = asyncAction {
     facebookServices.configureLogin(ConfigureLoginRequest(loginButtonOpt)) map { result =>
       if (result.success) logger trace "LoginButton configured successfully"
       else logger assertionFailed "LoginButton couldn't be configured correctly"
     }
   }
 
-  final protected def onActivityResultEvent(requestCode: Int, resultCode: Int, data: Intent) {
+  final protected def onActivityResultEvent(requestCode: Int, resultCode: Int, data: Intent) = asyncAction {
     facebookServices.processActivityResult(ProcessActivityResultRequest(requestCode, resultCode, data)) map { result =>
       if (result.handled) logger trace "ActivityResult handled successfully"
       else logger error "ActivityResult not handled"

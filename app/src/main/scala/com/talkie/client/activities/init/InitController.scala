@@ -14,11 +14,11 @@ trait InitController extends Controller {
     logger trace "Initial activity initialized"
   }
 
-  final protected def onStartEvent() {
+  final protected def onStartEvent() = asyncAction {
     moveToMainIfLogged()
   }
 
-  final protected def onRestartEvent() {
+  final protected def onRestartEvent() = asyncAction {
     moveToMainIfLogged()
   }
 }
