@@ -5,12 +5,12 @@ import android.view.View.OnClickListener
 
 trait Listeners {
 
-  protected def makeOnClickListener(action: View => Unit) = new OnClickListener {
+  final protected def makeOnClickListener(action: View => Unit) = new OnClickListener {
 
-    override def onClick(view: View): Unit = action(view)
+    override def onClick(view: View) = action(view)
   }
 
-  protected def setOnClickListener(action: View => Unit) = { view: View =>
+  final protected def setOnClickListener(action: View => Unit) = { view: View =>
     view setOnClickListener makeOnClickListener(action)
   }
 }

@@ -12,11 +12,11 @@ private[views] sealed trait Views {
 
   protected def findView[T](id: Int): Option[T]
 
-  protected def drawerOpt = findView[DrawerLayout](R.id.drawer_layout)
-  protected def loginButtonOpt = findView[LoginButton](R.id.login_button)
-  protected def fabOpt = findView[FloatingActionButton](R.id.fab)
-  protected def navigationOpt = findView[NavigationView](R.id.nav_view)
-  protected def toolbarOpt = findView[Toolbar](R.id.toolbar)
+  final protected def drawerOpt = findView[DrawerLayout](R.id.drawer_layout)
+  final protected def loginButtonOpt = findView[LoginButton](R.id.login_button)
+  final protected def fabOpt = findView[FloatingActionButton](R.id.fab)
+  final protected def navigationOpt = findView[NavigationView](R.id.nav_view)
+  final protected def toolbarOpt = findView[Toolbar](R.id.toolbar)
 }
 
 trait ActivityViews extends Views {

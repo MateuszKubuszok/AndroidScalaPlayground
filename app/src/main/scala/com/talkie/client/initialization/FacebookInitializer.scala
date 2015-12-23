@@ -6,7 +6,7 @@ import com.facebook.FacebookSdk
 
 trait FacebookInitializer extends Activity {
 
-  protected override def onCreate(savedInstanceState: Bundle) {
+  override def onCreate(savedInstanceState: Bundle) {
     super.onCreate(savedInstanceState)
     FacebookSdk.sdkInitialize(getApplicationContext)
   }

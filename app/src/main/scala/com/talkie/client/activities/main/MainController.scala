@@ -18,7 +18,7 @@ trait MainController extends Controller {
 
   private implicit val c = context
 
-  protected def onCreateEvent() {
+  final protected def onCreateEvent() {
     setContentView(R.layout.activity_main)
 
     toolbarOpt foreach setSupportActionBar
@@ -41,19 +41,19 @@ trait MainController extends Controller {
     navigationOpt foreach { _.setNavigationItemSelectedListener(this) }
   }
 
-  protected def onBackPressedEvent() = drawerOpt exists { drawer =>
+  final protected def onBackPressedEvent() = drawerOpt exists { drawer =>
     if (drawer.isDrawerOpen(GravityCompat.START)) {
       drawer.closeDrawer(GravityCompat.START)
       true
     } else false
   }
 
-  protected def onCreateOptionsMenuEvent(menu: Menu): Boolean = {
+  final protected def onCreateOptionsMenuEvent(menu: Menu): Boolean = {
     getMenuInflater.inflate(R.menu.main, menu)
     true
   }
 
-  protected def onOptionsItemSelectedEvent(item: MenuItem) = item.getItemId match {
+  final protected def onOptionsItemSelectedEvent(item: MenuItem) = item.getItemId match {
     case R.id.action_settings => true
     case R.id.action_logout =>
       facebookServices.logout(LogoutRequest())
@@ -61,7 +61,7 @@ trait MainController extends Controller {
     case _ => false
   }
 
-  protected def onNavigationItemSelectedEvent(item: MenuItem) = {
+  final protected def onNavigationItemSelectedEvent(item: MenuItem) = {
     item.getItemId match {
       case R.id.nav_camera =>
       case R.id.nav_gallery =>

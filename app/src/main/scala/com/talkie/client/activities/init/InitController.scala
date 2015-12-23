@@ -9,16 +9,16 @@ trait InitController extends Controller {
   self: Activity
     with AutomatedAuthNavigation =>
 
-  protected def onCreateEvent() {
+  final protected def onCreateEvent() {
     setContentView(R.layout.activity_init)
     logger trace "Initial activity initialized"
   }
 
-  protected def onStartEvent() {
+  final protected def onStartEvent() {
     moveToMainIfLogged()
   }
 
-  protected def onRestartEvent() {
+  final protected def onRestartEvent() {
     moveToMainIfLogged()
   }
 }
