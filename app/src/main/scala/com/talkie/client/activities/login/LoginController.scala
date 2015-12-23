@@ -2,26 +2,26 @@ package com.talkie.client.activities.login
 
 import android.app.Activity
 import android.content.Intent
-import android.os.Bundle
+import com.talkie.client.R
+import com.talkie.client.activities.common.Controller
 import com.talkie.client.services.facebook.{FacebookServicesComponent, FacebookMessages}
 import FacebookMessages.{ConfigureLoginRequest, ProcessActivityResultRequest}
-import com.talkie.client.services.ContextComponent
-import com.talkie.client.views.ActivityViews
 
-trait Login extends Activity {
-  self: ActivityViews
-    with ContextComponent
+trait LoginController extends Controller {
+  self: Activity
     with FacebookServicesComponent =>
 
   implicit val c = context
 
-  override protected def onPostCreate(savedInstanceState: Bundle) {
-    super.onPostCreate(savedInstanceState)
+  protected def onCreateEvent() {
+    setContentView(R.layout.activity_login)
+  }
+
+  protected def onPostCreateEvent() {
     facebookServices.configureLogin(ConfigureLoginRequest(loginButtonOpt))
   }
 
-  override protected def onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
-    super.onActivityResult(requestCode, resultCode, data)
+  protected def onActivityResultEvent(requestCode: Int, resultCode: Int, data: Intent) {
     facebookServices.processActivityResult(ProcessActivityResultRequest(requestCode, resultCode, data))
   }
 }
