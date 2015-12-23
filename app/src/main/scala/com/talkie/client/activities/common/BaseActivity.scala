@@ -1,12 +1,16 @@
 package com.talkie.client.activities.common
 
 import android.app.Activity
-import com.talkie.client.navigation.NavigateActivities
-import com.talkie.client.services.LoggerComponentImpl
+import com.talkie.client.navigation.{AutomatedAuthNavigation, ManualNavigation}
+import com.talkie.client.services.{ ContextComponentImpl, LoggerComponentImpl }
+import com.talkie.client.services.facebook.FacebookServicesComponentImpl
 import com.talkie.client.views.ActivityViews
 
 trait BaseActivity
     extends Activity
     with ActivityViews
-    with NavigateActivities
+    with AutomatedAuthNavigation
+    with ContextComponentImpl
+    with FacebookServicesComponentImpl
     with LoggerComponentImpl
+    with ManualNavigation

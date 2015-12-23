@@ -1,4 +1,4 @@
-package com.talkie.client.activities
+package com.talkie.client.activities.main
 
 import android.os.Bundle
 import android.support.design.widget.{NavigationView, Snackbar}
@@ -6,11 +6,13 @@ import android.support.v4.view.GravityCompat
 import android.support.v7.app.{ActionBarDrawerToggle, AppCompatActivity}
 import android.view.{Menu, MenuItem}
 import com.talkie.client.R
-import com.talkie.client.views.{Listeners, ActivityViews}
+import com.talkie.client.activities.common.BaseActivity
+import com.talkie.client.views.{ActivityViews, Listeners}
 
 class MainActivity
     extends AppCompatActivity
     with NavigationView.OnNavigationItemSelectedListener
+    with BaseActivity
     with ActivityViews
     with Listeners {
 

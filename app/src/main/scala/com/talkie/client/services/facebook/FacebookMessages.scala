@@ -1,12 +1,18 @@
-package com.talkie.client.services.loginSetup
+package com.talkie.client.services.facebook
 
 import android.content.Intent
 import com.facebook.login.widget.LoginButton
 
-object LoginSetupMessages {
+object FacebookMessages {
+
+  case class CheckLoggedStatusRequest()
+  case class CheckLoggedStatusResponse(isLogged: Boolean)
 
   case class ConfigureLoginRequest(loginButtonOpt: Option[LoginButton])
   case class ConfigureLoginResponse(success: Boolean)
+
+  case class LogoutRequest()
+  case class LogoutResponse()
 
   case class ProcessActivityResultRequest(requestCode: Int, resultCode: Int, data: Intent)
   case class ProcessActivityResultResponse(handled: Boolean)
