@@ -21,27 +21,34 @@ trait AutomatedAuthNavigation extends Activity {
   override protected def onStart() {
     super.onStart()
     accessTokenTracker.startTracking()
+    logger trace "Started tracing AccessTokens"
   }
 
   override protected def onRestart() {
     super.onRestart()
     accessTokenTracker.startTracking()
+    logger trace "Started tracing AccessTokens"
   }
 
   override protected def onDestroy() {
     super.onDestroy()
     accessTokenTracker.stopTracking()
+    logger trace "Stopped tracing AccessTokens"
   }
 
   protected def onUserLoggedIn(currentAccessToken: AccessToken) {
     returnFromLoginActivity()
+    logger info "User logged in"
   }
 
   protected def onUserLoggedOut(oldAccessToken: AccessToken) {
     startLoginActivityThenReturnTo(mainActivity())
+    logger info "User logged out"
   }
 
-  protected def onTokenRefreshed(oldAccessToken: AccessToken, currentAccessToken: AccessToken) {}
+  protected def onTokenRefreshed(oldAccessToken: AccessToken, currentAccessToken: AccessToken): Unit = {
+    logger debug "AccessToken refreshed"
+  }
 
   protected def moveToMainIfLogged() =
     if (facebookServices.checkIfLogged(CheckLoggedStatusRequest()).isLogged) {

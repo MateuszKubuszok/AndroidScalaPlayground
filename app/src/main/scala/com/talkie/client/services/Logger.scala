@@ -4,7 +4,7 @@ import android.util.Log
 
 trait Logger {
 
-  def assert(msg: String): Unit
+  def assertionFailed(msg: String): Unit
   def trace(msg: String): Unit
   def info(msg: String): Unit
   def debug(msg: String): Unit
@@ -23,7 +23,7 @@ trait LoggerComponentImpl extends LoggerComponent {
 
   object logger extends Logger {
 
-    def assert(msg: String) = Log.wtf(TAG, msg)
+    def assertionFailed(msg: String) = Log.wtf(TAG, msg)
     def trace(msg: String) = Log.v(TAG, msg)
     def info(msg: String) = Log.i(TAG, msg)
     def debug(msg: String) = Log.d(TAG, msg)

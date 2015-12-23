@@ -11,17 +11,17 @@ class InitActivity
     with InitController
     with AppInitialization {
 
-  override protected def onCreate(savedInstanceState: Bundle) {
+  override def onCreate(savedInstanceState: Bundle) {
     super.onCreate(savedInstanceState)
     onCreateEvent()
   }
 
-  override protected def onStart() {
+  override def onStart() {
     super.onStart()
     onStartEvent()
   }
 
-  override protected def onRestart() {
+  override def onRestart() {
     super.onRestart()
     onRestartEvent()
   }

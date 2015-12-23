@@ -18,10 +18,14 @@ trait LoginController extends Controller {
   }
 
   protected def onPostCreateEvent() {
-    facebookServices.configureLogin(ConfigureLoginRequest(loginButtonOpt))
+    val result = facebookServices.configureLogin(ConfigureLoginRequest(loginButtonOpt))
+    if (result.success) logger trace "LoginButton configured successfully"
+    else logger assertionFailed "LoginButton couldn't be configured correctly"
   }
 
   protected def onActivityResultEvent(requestCode: Int, resultCode: Int, data: Intent) {
-    facebookServices.processActivityResult(ProcessActivityResultRequest(requestCode, resultCode, data))
+    val result = facebookServices.processActivityResult(ProcessActivityResultRequest(requestCode, resultCode, data))
+    if (result.handled) logger trace "ActivityResult handled successfully"
+    else logger error "ActivityResult not handled"
   }
 }

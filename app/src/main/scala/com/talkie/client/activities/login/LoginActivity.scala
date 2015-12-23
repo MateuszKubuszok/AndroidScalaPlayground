@@ -10,17 +10,17 @@ class LoginActivity
     with BaseActivity
     with LoginController {
 
-  override protected def onCreate(savedInstanceState: Bundle) {
+  override def onCreate(savedInstanceState: Bundle) {
     super.onCreate(savedInstanceState)
     onCreateEvent()
   }
 
-  override protected def onPostCreate(savedInstanceState: Bundle) {
+  override def onPostCreate(savedInstanceState: Bundle) {
     super.onPostCreate(savedInstanceState)
     onPostCreateEvent()
   }
 
-  override protected def onActivityResultEvent(requestCode: Int, resultCode: Int, data: Intent) {
+  override def onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
     super.onActivityResult(requestCode, resultCode, data)
     onActivityResultEvent(requestCode, resultCode, data)
   }
