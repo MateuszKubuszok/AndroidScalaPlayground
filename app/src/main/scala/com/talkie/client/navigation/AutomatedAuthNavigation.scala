@@ -15,6 +15,7 @@ trait AutomatedAuthNavigation extends Activity {
     with ManualNavigation =>
 
   private implicit val c = context
+  private implicit val ec = context.executionContext
 
   private val Extra_ActivityAfterLogin = "activity_after_login"
 
@@ -51,12 +52,14 @@ trait AutomatedAuthNavigation extends Activity {
   }
 
   protected def moveToMainIfLogged() =
-    if (facebookServices.checkIfLogged(CheckLoggedStatusRequest()).isLogged) {
-      logger trace "Move on to MainActivity"
-      startMainActivity()
-    } else {
-      logger trace "Move on to LoginActivity"
-      startLoginActivityThenReturnTo(mainActivity())
+    facebookServices.checkIfLogged(CheckLoggedStatusRequest()) map { result =>
+      if (result.isLogged) {
+        logger trace "Move on to MainActivity"
+        startMainActivity()
+      } else {
+        logger trace "Move on to LoginActivity"
+        startLoginActivityThenReturnTo(mainActivity())
+      }
     }
 
   private def startLoginActivityThenReturnTo(intent: Intent) {

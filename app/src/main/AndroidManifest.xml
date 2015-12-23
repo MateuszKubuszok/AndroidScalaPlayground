@@ -2,12 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.talkie.client">
 
-  <!-- To auto-complete the email text field in the login form with the user's emails -->
-  <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-  <!-- <uses-permission android:name="android.permission.READ_PROFILE" /> -->
-  <!-- <uses-permission android:name="android.permission.READ_CONTACTS" /> -->
   <!-- For Facebook -->
   <uses-permission android:name="android.permission.INTERNET" />
+  <!-- For GPS and WiFi location services -->
+  <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
   <application
       android:name="android.support.multidex.MultiDexApplication"

@@ -12,20 +12,23 @@ trait LoginController extends Controller {
     with FacebookServicesComponent =>
 
   implicit val c = context
+  implicit val ec = context.executionContext
 
   final protected def onCreateEvent() {
     setContentView(R.layout.activity_login)
   }
 
   final protected def onPostCreateEvent() {
-    val result = facebookServices.configureLogin(ConfigureLoginRequest(loginButtonOpt))
-    if (result.success) logger trace "LoginButton configured successfully"
-    else logger assertionFailed "LoginButton couldn't be configured correctly"
+    facebookServices.configureLogin(ConfigureLoginRequest(loginButtonOpt)) map { result =>
+      if (result.success) logger trace "LoginButton configured successfully"
+      else logger assertionFailed "LoginButton couldn't be configured correctly"
+    }
   }
 
   final protected def onActivityResultEvent(requestCode: Int, resultCode: Int, data: Intent) {
-    val result = facebookServices.processActivityResult(ProcessActivityResultRequest(requestCode, resultCode, data))
-    if (result.handled) logger trace "ActivityResult handled successfully"
-    else logger error "ActivityResult not handled"
+    facebookServices.processActivityResult(ProcessActivityResultRequest(requestCode, resultCode, data)) map { result =>
+      if (result.handled) logger trace "ActivityResult handled successfully"
+      else logger error "ActivityResult not handled"
+    }
   }
 }
