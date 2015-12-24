@@ -54,7 +54,9 @@ trait MainController extends Controller {
   }
 
   final protected def onOptionsItemSelectedEvent(item: MenuItem) = item.getItemId match {
-    case R.id.action_settings => true
+    case R.id.action_settings =>
+      startSettingsActivity()
+      true
     case R.id.action_logout =>
       facebookServices.logout(LogoutRequest())
       true
