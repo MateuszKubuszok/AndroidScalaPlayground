@@ -4,9 +4,10 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import com.facebook.{AccessToken, AccessTokenTracker}
-import com.talkie.client.services.{ContextComponent, LoggerComponent}
-import com.talkie.client.services.facebook.FacebookMessages.CheckLoggedStatusRequest
-import com.talkie.client.services.facebook.FacebookServicesComponent
+import com.talkie.client.core.logging.LoggerComponent
+import com.talkie.client.core.services.ContextComponent
+import com.talkie.client.domain.services.facebook.FacebookMessages.CheckLoggedStatusRequest
+import com.talkie.client.domain.services.facebook.FacebookServicesComponent
 
 trait AutomatedAuthNavigation extends Activity {
   self: ContextComponent

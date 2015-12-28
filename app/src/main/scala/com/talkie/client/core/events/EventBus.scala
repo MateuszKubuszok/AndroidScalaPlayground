@@ -1,16 +1,17 @@
-package com.talkie.client.events
+package com.talkie.client.core.events
 
-import com.talkie.client.events.EventMessages._
-import com.talkie.client.services.{Service, AsyncService}
+import com.talkie.client.core.events.EventMessages._
+import com.talkie.client.core.services.{AsyncService, Service, SyncService}
 
 import scala.collection.mutable
 import scala.util.Try
 
 trait EventBus {
 
+  def getListeners: SyncService[GetListenersRequest, GetListenersResponse]
   def notifyEventListeners: AsyncService[NotifyEventListenersRequest, NotifyEventListenersResponse]
-  def registerEventListener: AsyncService[RegisterEventListenerRequest[_ <: Event], RegisterEventListenerResponse]
-  def removeEventListener: AsyncService[RemoveEventListenerRequest[_ <: Event], RemoveEventListenerResponse]
+  def registerEventListener: SyncService[RegisterEventListenerRequest[_ <: Event], RegisterEventListenerResponse]
+  def removeEventListener: SyncService[RemoveEventListenerRequest[_ <: Event], RemoveEventListenerResponse]
 }
 
 trait EventBusComponent {
@@ -32,7 +33,11 @@ trait EventBusComponentImpl extends EventBusComponent {
 
   object eventBus extends EventBus {
 
-    val notifyEventListeners = Service.async { request: NotifyEventListenersRequest =>
+    val getListeners = Service { request: GetListenersRequest =>
+      GetListenersResponse(listenersOf(request.event).toSet)
+    }
+
+    override val notifyEventListeners = Service.async { request: NotifyEventListenersRequest =>
 
       val results = for {
         listener <- listenersOf(request.event)
@@ -41,13 +46,13 @@ trait EventBusComponentImpl extends EventBusComponent {
       NotifyEventListenersResponse(results.forall(_.isSuccess))
     }
 
-    val registerEventListener = Service.async { request: RegisterEventListenerRequest[_ <: Event] =>
+    override val registerEventListener = Service { request: RegisterEventListenerRequest[_ <: Event] =>
       def addListener[E <: Event](request: RegisterEventListenerRequest[E]) =
         listenersOf(request.event).add(request.listener)
       RegisterEventListenerResponse(addListener(request))
     }
 
-    val removeEventListener = Service.async { request: RemoveEventListenerRequest[_ <: Event] =>
+    override val removeEventListener = Service { request: RemoveEventListenerRequest[_ <: Event] =>
       def removeListener[E <: Event](request: RemoveEventListenerRequest[E]) =
         listenersOf(request.event).add(request.listener)
       RemoveEventListenerResponse(removeListener(request))

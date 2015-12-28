@@ -1,4 +1,4 @@
-package com.talkie.client.services.location
+package com.talkie.client.domain.services.location
 
 import android.location.LocationManager
 

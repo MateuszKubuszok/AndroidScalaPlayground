@@ -1,10 +1,11 @@
-package com.talkie.client.services.location
+package com.talkie.client.domain.services.location
 
 import android.app.Activity
 import android.content.Context.LOCATION_SERVICE
 import android.location.{Criteria, LocationManager}
-import com.talkie.client.services.{LoggerComponent, Service, AsyncService}
-import com.talkie.client.services.location.LocationMessages._
+import com.talkie.client.core.logging.LoggerComponent
+import com.talkie.client.core.services.{Service, AsyncService}
+import com.talkie.client.domain.services.location.LocationMessages._
 
 import scala.concurrent.duration._
 
@@ -26,7 +27,7 @@ trait LocationServicesComponentImpl extends LocationServicesComponent {
 
   object locationServices extends LocationServices {
 
-    private lazy val locationManager = self.getSystemService(LOCATION_SERVICE).asInstanceOf[LocationManager]
+    private lazy val locationManager = getSystemService(LOCATION_SERVICE).asInstanceOf[LocationManager]
 
     private val minTimeMs = (15 minutes).toMillis
     private val minDistanceM = 1500

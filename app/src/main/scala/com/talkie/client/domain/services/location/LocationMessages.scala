@@ -1,7 +1,7 @@
-package com.talkie.client.services.location
+package com.talkie.client.domain.services.location
 
 import android.location.{Location, LocationListener}
-import com.talkie.client.services.location.LocationProvider.LocationProvider
+import com.talkie.client.domain.services.location.LocationProvider.LocationProvider
 
 object LocationMessages {
 

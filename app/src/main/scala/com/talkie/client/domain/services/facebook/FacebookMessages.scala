@@ -1,4 +1,4 @@
-package com.talkie.client.services.facebook
+package com.talkie.client.domain.services.facebook
 
 import android.content.Intent
 import com.facebook.login.widget.LoginButton

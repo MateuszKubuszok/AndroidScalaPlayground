@@ -1,4 +1,4 @@
-package com.talkie.client.initialization
+package com.talkie.client.core.initialization
 
 import android.app.Activity
 

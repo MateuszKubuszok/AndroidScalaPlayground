@@ -1,8 +1,9 @@
 package com.talkie.client.activities.common
 
 import android.app.Activity
+import com.talkie.client.core.logging.LoggerComponent
 import com.talkie.client.navigation.ManualNavigation
-import com.talkie.client.services.{ContextComponent, LoggerComponent}
+import com.talkie.client.core.services.ContextComponent
 import com.talkie.client.views.ActivityViews
 
 import scala.concurrent.Future

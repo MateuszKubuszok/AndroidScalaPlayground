@@ -1,4 +1,4 @@
-package com.talkie.client.events
+package com.talkie.client.core.events
 
 trait Event {
 

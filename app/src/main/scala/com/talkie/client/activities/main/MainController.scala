@@ -6,8 +6,8 @@ import android.support.v7.app.{ActionBarDrawerToggle, AppCompatActivity}
 import android.view.{MenuItem, Menu}
 import com.talkie.client.R
 import com.talkie.client.activities.common.Controller
-import com.talkie.client.services.facebook.FacebookMessages.LogoutRequest
-import com.talkie.client.services.facebook.FacebookServicesComponent
+import com.talkie.client.domain.services.facebook.FacebookMessages.LogoutRequest
+import com.talkie.client.domain.services.facebook.FacebookServicesComponent
 import com.talkie.client.views.Listeners
 
 trait MainController extends Controller {

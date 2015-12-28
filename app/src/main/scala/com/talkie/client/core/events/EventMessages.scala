@@ -1,6 +1,9 @@
-package com.talkie.client.events
+package com.talkie.client.core.events
 
 object EventMessages {
+
+  case class GetListenersRequest(event: Event)
+  case class GetListenersResponse(listeners: Set[EventListener[_ <: Event]])
 
   case class NotifyEventListenersRequest(event: Event)
   case class NotifyEventListenersResponse(success: Boolean)

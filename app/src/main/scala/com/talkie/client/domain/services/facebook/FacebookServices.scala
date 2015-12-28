@@ -1,9 +1,10 @@
-package com.talkie.client.services.facebook
+package com.talkie.client.domain.services.facebook
 
 import com.facebook.login.LoginManager
 import com.facebook.{CallbackManager, Profile}
-import com.talkie.client.services.facebook.FacebookMessages._
-import com.talkie.client.services._
+import com.talkie.client.core.logging.LoggerComponent
+import com.talkie.client.domain.services.facebook.FacebookMessages._
+import com.talkie.client.core.services._
 
 trait FacebookServices {
 

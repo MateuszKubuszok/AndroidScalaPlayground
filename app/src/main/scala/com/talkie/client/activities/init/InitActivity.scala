@@ -3,7 +3,7 @@ package com.talkie.client.activities.init
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.talkie.client.activities.common.BaseActivity
-import com.talkie.client.initialization.AppInitialization
+import com.talkie.client.core.initialization.AppInitialization
 
 class InitActivity
     extends AppCompatActivity

@@ -4,7 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import com.talkie.client.R
 import com.talkie.client.activities.common.Controller
-import com.talkie.client.services.facebook.{FacebookServicesComponent, FacebookMessages}
+import com.talkie.client.domain.services.facebook.{FacebookServicesComponent, FacebookMessages}
 import FacebookMessages.{ConfigureLoginRequest, ProcessActivityResultRequest}
 
 trait LoginController extends Controller {

@@ -1,4 +1,4 @@
-package com.talkie.client.services
+package com.talkie.client.core.services
 
 import scala.concurrent.ExecutionContext
 

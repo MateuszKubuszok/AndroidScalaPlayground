@@ -1,4 +1,4 @@
-package com.talkie.client.services
+package com.talkie.client.core.logging
 
 import android.util.Log
 
