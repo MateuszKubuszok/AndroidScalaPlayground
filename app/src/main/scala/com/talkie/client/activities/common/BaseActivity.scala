@@ -12,7 +12,6 @@ import com.talkie.client.views.{ActivityViews, Listeners}
 
 trait BaseActivity
     extends Activity
-    with ActivityViews
     // core
     with ContextComponentImpl
     with EventBusComponentImpl
@@ -24,5 +23,6 @@ trait BaseActivity
     // navigation
     with AutomatedAuthNavigation
     with ManualNavigation
-    // utils
+    // views
+    with ActivityViews
     with Listeners

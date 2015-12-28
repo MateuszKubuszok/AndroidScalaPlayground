@@ -1,13 +1,13 @@
 package com.talkie.client.core.initialization
 
 import android.app.Activity
-import android.os.Bundle
 import com.facebook.FacebookSdk
 
-trait FacebookInitializer extends Activity {
+trait FacebookInitializer extends Initialization {
+  self: Activity =>
 
-  override protected def onCreate(savedInstanceState: Bundle) {
-    super.onCreate(savedInstanceState)
+  override def initialize() {
+    super.initialize()
     FacebookSdk.sdkInitialize(getApplicationContext)
   }
 }

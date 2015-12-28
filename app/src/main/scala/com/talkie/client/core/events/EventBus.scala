@@ -1,6 +1,7 @@
 package com.talkie.client.core.events
 
 import com.talkie.client.core.events.EventMessages._
+import com.talkie.client.core.logging.LoggerComponent
 import com.talkie.client.core.services.{AsyncService, Service, SyncService}
 
 import scala.collection.mutable
@@ -25,6 +26,7 @@ private[events] object EventBusComponentImpl {
 }
 
 trait EventBusComponentImpl extends EventBusComponent {
+  self: LoggerComponent =>
 
   protected def listenersOf[E <: Event](event: E) = {
     import EventBusComponentImpl.listeners
@@ -38,6 +40,7 @@ trait EventBusComponentImpl extends EventBusComponent {
     }
 
     override val notifyEventListeners = Service.async { request: NotifyEventListenersRequest =>
+      logger trace s"Notify listeners about event: ${request.event}"
 
       val results = for {
         listener <- listenersOf(request.event)
