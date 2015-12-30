@@ -1,6 +1,6 @@
 package com.talkie.client.core.initialization
 
-trait Initialization {
+private[initialization] trait Initialization {
 
   def initialize(): Unit = {}
 }

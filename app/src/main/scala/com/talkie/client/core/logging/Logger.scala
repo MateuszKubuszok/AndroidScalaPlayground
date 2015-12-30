@@ -10,6 +10,7 @@ trait Logger {
   def debug(msg: String): Unit
   def warn(msg: String): Unit
   def error(msg: String): Unit
+  def error(msg: String, e: Throwable): Unit
 }
 
 trait LoggerComponent {
@@ -29,5 +30,6 @@ trait LoggerComponentImpl extends LoggerComponent {
     def debug(msg: String) = Log.d(TAG, msg)
     def warn(msg: String) = Log.w(TAG, msg)
     def error(msg: String) = Log.e(TAG, msg)
+    def error(msg: String, e: Throwable) = Log.e(TAG, msg, e)
   }
 }

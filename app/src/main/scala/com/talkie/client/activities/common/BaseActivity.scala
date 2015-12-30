@@ -3,6 +3,7 @@ package com.talkie.client.activities.common
 import android.app.Activity
 import com.talkie.client.core.events.EventBusComponentImpl
 import com.talkie.client.core.logging.LoggerComponentImpl
+import com.talkie.client.core.permissions.PermissionsServicesComponentImpl
 import com.talkie.client.core.scheduler.SchedulerComponentImpl
 import com.talkie.client.navigation.{AutomatedAuthNavigation, ManualNavigation}
 import com.talkie.client.domain.services.location.LocationServicesComponentImpl
@@ -16,6 +17,7 @@ trait BaseActivity
     with ContextComponentImpl
     with EventBusComponentImpl
     with LoggerComponentImpl
+    with PermissionsServicesComponentImpl
     with SchedulerComponentImpl
     // services
     with FacebookServicesComponentImpl

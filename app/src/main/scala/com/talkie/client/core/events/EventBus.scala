@@ -35,7 +35,7 @@ trait EventBusComponentImpl extends EventBusComponent {
 
   object eventBus extends EventBus {
 
-    val getListeners = Service { request: GetListenersRequest =>
+    override val getListeners = Service { request: GetListenersRequest =>
       GetListenersResponse(listenersOf(request.event).toSet)
     }
 
@@ -57,7 +57,7 @@ trait EventBusComponentImpl extends EventBusComponent {
 
     override val removeEventListener = Service { request: RemoveEventListenerRequest[_ <: Event] =>
       def removeListener[E <: Event](request: RemoveEventListenerRequest[E]) =
-        listenersOf(request.event).add(request.listener)
+        listenersOf(request.event).remove(request.listener)
       RemoveEventListenerResponse(removeListener(request))
     }
   }

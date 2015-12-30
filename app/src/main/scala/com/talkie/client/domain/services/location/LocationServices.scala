@@ -4,7 +4,9 @@ import android.app.Activity
 import android.content.Context.LOCATION_SERVICE
 import android.location.{Criteria, LocationManager}
 import com.talkie.client.core.logging.LoggerComponent
-import com.talkie.client.core.services.{Service, AsyncService}
+import com.talkie.client.core.permissions.PermissionsMessages.RequirePermissionsRequest
+import com.talkie.client.core.permissions.{RequiredPermissions, PermissionsServicesComponent}
+import com.talkie.client.core.services.{Context, Service, AsyncService}
 import com.talkie.client.domain.services.location.LocationMessages._
 
 import scala.concurrent.duration._
@@ -23,13 +25,14 @@ trait LocationServicesComponent {
 
 trait LocationServicesComponentImpl extends LocationServicesComponent {
   self: Activity
-    with LoggerComponent =>
+    with LoggerComponent
+    with PermissionsServicesComponent =>
 
   object locationServices extends LocationServices {
 
     private lazy val locationManager = getSystemService(LOCATION_SERVICE).asInstanceOf[LocationManager]
 
-    private val minTimeMs = (15 minutes).toMillis
+    private val minTimeMs = (4 minutes).toMillis
     private val minDistanceM = 1500
 
     private lazy val disabledProviderCriteria = {
@@ -41,32 +44,50 @@ trait LocationServicesComponentImpl extends LocationServicesComponent {
     private lazy val enabledProviderCriteria = {
       val criteria = new Criteria
       criteria.setCostAllowed(true)
-      criteria.setAccuracy(Criteria.ACCURACY_HIGH)
+      criteria.setAccuracy(Criteria.ACCURACY_FINE)
       criteria
     }
 
-    override val getLastKnownLocation = Service.async { request: LastKnownLocationRequest =>
-      logger trace "Requested last known location"
+    override val getLastKnownLocation = Service { (request: LastKnownLocationRequest, context: Context) =>
+      logger trace s"Requested last known location using: ${request.provider}"
 
-      val locationOpt = {
-        Option(locationManager.getBestProvider(enabledProviderCriteria, true))
-      } orElse {
-        Option(locationManager.getBestProvider(disabledProviderCriteria, false))
-      } flatMap { provider =>
-        Option(locationManager.getLastKnownLocation(request.provider.toString))
+      implicit val c = context
+      implicit val ec = context.executionContext
+
+      for {
+        response <- permissionsServices.requirePermissions(RequirePermissionsRequest(Set(RequiredPermissions.AccessFineLocation)))
+        if response.granted
+      } yield {
+        val locationOpt = {
+          Option(locationManager.getBestProvider(enabledProviderCriteria, true))
+        } orElse {
+          Option(locationManager.getBestProvider(disabledProviderCriteria, false))
+        } flatMap { provider =>
+          Option(locationManager.getLastKnownLocation(request.provider.toString))
+        }
+
+        logger trace s"Last known location resolved to: $locationOpt"
+
+        LastKnownLocationResponse(locationOpt)
       }
-
-      LastKnownLocationResponse(locationOpt)
     }
 
-    override val registerLocationListener = Service.async { request: RegisterLocationListenerRequest =>
-      logger trace "Requested LocationListener registration"
+    override val registerLocationListener = Service { (request: RegisterLocationListenerRequest, context: Context) =>
+      logger trace s"Requested LocationListener registration for: ${request.providers mkString ","}"
 
-      request.providers foreach { provider =>
-        locationManager.requestLocationUpdates(provider.toString, minTimeMs, minDistanceM, request.listener)
+      implicit val c = context
+      implicit val ec = context.executionContext
+
+      for {
+        response <- permissionsServices.requirePermissions(RequirePermissionsRequest(Set(RequiredPermissions.AccessFineLocation)))
+        if response.granted
+      } yield {
+        request.providers foreach { provider =>
+          locationManager.requestLocationUpdates(provider.toString, minTimeMs, minDistanceM, request.listener)
+        }
+
+        RegisterLocationListenerResponse(request.providers.nonEmpty)
       }
-
-      RegisterLocationListenerResponse(request.providers.nonEmpty)
     }
 
     override val removeLocationListener = Service.async { request: RemoveLocationListenerRequest =>

@@ -1,5 +1,7 @@
 package com.talkie.client.core.services
 
+import com.talkie.client.core.logging.LoggerComponent
+
 import scala.concurrent.ExecutionContext
 
 trait Context {
@@ -13,9 +15,13 @@ trait ContextComponent {
 }
 
 trait ContextComponentImpl extends ContextComponent {
+  self: LoggerComponent =>
 
   object context extends Context {
 
-    val executionContext = ExecutionContext.Implicits.global
+    val executionContext = ExecutionContext.fromExecutor(
+      ContextExecutor,
+      (e: Throwable) => logger error ("Unhandled Future exception", e)
+    )
   }
 }

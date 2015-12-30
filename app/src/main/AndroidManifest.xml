@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.talkie.client">
 
-  <!-- For Facebook -->
+  <!-- For Facebook SDK -->
   <uses-permission android:name="android.permission.INTERNET" />
   <!-- For GPS and WiFi location services -->
   <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
