@@ -44,9 +44,9 @@ trait EventBusComponentImpl extends EventBusComponent {
 
       val results = for {
         listener <- listenersOf(request.event)
-      } yield Try(listener.handleEvent(request.event))
+      } yield Try(listener.handleEvent(request.event)).isSuccess
 
-      NotifyEventListenersResponse(results.forall(_.isSuccess))
+      NotifyEventListenersResponse(results forall identity)
     }
 
     override val registerEventListener = Service { request: RegisterEventListenerRequest[_ <: Event] =>
