@@ -5,10 +5,10 @@ import android.content.pm.PackageManager
 import com.talkie.client.core.logging.LoggerComponent
 import com.talkie.client.core.permissions.PermissionsMessages._
 import com.talkie.client.core.permissions.RequiredPermissions.RequiredPermissions
-import com.talkie.client.core.services.{AsyncService, Context, Service}
+import com.talkie.client.core.services.{ AsyncService, Context, Service }
 
 import scala.collection.mutable
-import scala.concurrent.{Future, Promise}
+import scala.concurrent.{ Future, Promise }
 
 trait PermissionsServices {
 
@@ -28,8 +28,7 @@ object PermissionsServicesComponentImpl {
 }
 
 trait PermissionsServicesComponentImpl extends Activity with PermissionsServicesComponent {
-  self: Activity
-    with LoggerComponent =>
+  self: Activity with LoggerComponent =>
 
   import PermissionsServicesComponentImpl._
 
@@ -38,7 +37,7 @@ trait PermissionsServicesComponentImpl extends Activity with PermissionsServices
     logger trace s"Permission results arrived for request $requestCode: ${permissions.toList mkString ","}"
     requests get requestCode map { promise =>
       requests remove requestCode
-      promise.success()
+      promise success { () }
     } orElse {
       logger assertionFailed s"Permission request $requestCode should have been set within requests map"
       None

@@ -2,7 +2,7 @@ package com.talkie.client.core.events
 
 import com.talkie.client.core.events.EventMessages._
 import com.talkie.client.core.logging.LoggerComponent
-import com.talkie.client.core.services.{AsyncService, Service, SyncService}
+import com.talkie.client.core.services.{ AsyncService, Service, SyncService }
 
 import scala.collection.mutable
 import scala.util.Try

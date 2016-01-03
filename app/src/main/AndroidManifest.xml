@@ -19,7 +19,7 @@
         android:value="@string/facebook_app_id" />
 
     <activity
-        android:name=".activities.init.InitActivity"
+        android:name=".app.activities.init.InitActivity"
         android:label="@string/app_name"
         android:theme="@style/AppTheme.NoActionBar">
       <intent-filter>
@@ -29,11 +29,11 @@
       </intent-filter>
     </activity>
     <activity
-        android:name=".activities.login.LoginActivity"
+        android:name=".app.activities.login.LoginActivity"
         android:label="@string/title_activity_login"
         android:theme="@style/AppTheme.NoActionBar" />
     <activity
-        android:name=".activities.main.MainActivity"
+        android:name=".app.activities.main.MainActivity"
         android:label="@string/app_name"
         android:theme="@style/AppTheme.NoActionBar" />
     <activity
@@ -42,7 +42,7 @@
         android:label="@string/app_name"
         android:theme="@android:style/Theme.Translucent.NoTitleBar" />
     <activity
-        android:name=".activities.settings.SettingsActivity"
+        android:name=".app.activities.settings.SettingsActivity"
         android:label="@string/app_name" />
   </application>
 

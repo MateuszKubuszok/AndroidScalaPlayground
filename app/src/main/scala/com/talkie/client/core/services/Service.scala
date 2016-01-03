@@ -33,9 +33,10 @@ object Service extends LoggerComponentImpl {
   private def monitored[Request, Response](fun: (Request, Context) => Response) =
     (request: Request, context: Context) => try {
       fun(request, context)
-    } catch { case e: Throwable =>
-      logger error ("Exception thrown within a service", e)
-      throw e
+    } catch {
+      case e: Throwable =>
+        logger error ("Exception thrown within a service", e)
+        throw e
     }
 
   private def withoutContext[Request, Response](fun: Request => Response) =

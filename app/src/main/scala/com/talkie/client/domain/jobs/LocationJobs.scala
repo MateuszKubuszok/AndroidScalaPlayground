@@ -1,6 +1,6 @@
 package com.talkie.client.domain.jobs
 
-import android.location.{Location, LocationListener}
+import android.location.{ Location, LocationListener }
 import android.os.Bundle
 import com.talkie.client.core.events.EventBusComponent
 import com.talkie.client.core.events.EventMessages.NotifyEventListenersRequest
@@ -8,9 +8,9 @@ import com.talkie.client.core.logging.LoggerComponent
 import com.talkie.client.core.scheduler.Job
 import com.talkie.client.core.scheduler.SchedulerMessages.SchedulePeriodicJobRequest
 import com.talkie.client.core.services.ContextComponent
-import com.talkie.client.domain.events.LocationEvents.{LocationChangedEvent, ProviderStatusChangedEvent, ProviderDisabled, ProviderEnabled}
-import com.talkie.client.domain.services.location.LocationMessages.{LastKnownLocationRequest, RemoveLocationListenerRequest, RegisterLocationListenerRequest}
-import com.talkie.client.domain.services.location.{LocationServicesComponent, LocationProvider, ProviderStatus}
+import com.talkie.client.domain.events.LocationEvents.{ LocationChangedEvent, ProviderStatusChangedEvent, ProviderDisabled, ProviderEnabled }
+import com.talkie.client.domain.services.location.LocationMessages.{ LastKnownLocationRequest, RemoveLocationListenerRequest, RegisterLocationListenerRequest }
+import com.talkie.client.domain.services.location.{ LocationServicesComponent, LocationProvider, ProviderStatus }
 
 import scala.concurrent.duration._
 
@@ -27,10 +27,7 @@ trait LocationJobsComponent {
 }
 
 trait LocationJobsComponentImpl extends LocationJobsComponent {
-  self: ContextComponent 
-    with EventBusComponent
-    with LoggerComponent
-    with LocationServicesComponent =>
+  self: ContextComponent with EventBusComponent with LoggerComponent with LocationServicesComponent =>
 
   object locationJobs extends LocationJobs {
 
@@ -38,11 +35,9 @@ trait LocationJobsComponentImpl extends LocationJobsComponent {
     override val turnOffLocationTrackingJob = SchedulePeriodicJobRequest(TurnOffLocationTracking, 1 minutes, 2 minutes)
     override val checkLastLocationJob = SchedulePeriodicJobRequest(CheckLastLocation, 90 seconds, 1 minute)
 
-
     private implicit val c = context
 
     private val providers = Set(LocationProvider.GpsProvider, LocationProvider.NetworkProvider, LocationProvider.PassiveProvider) // replace with settings
-
 
     private object LocationEventNotifier extends LocationListener {
 
@@ -59,18 +54,15 @@ trait LocationJobsComponentImpl extends LocationJobsComponent {
         eventBus.notifyEventListeners(NotifyEventListenersRequest(LocationChangedEvent(location)))
     }
 
-
     private object TurnOnLocationTracking extends Job {
 
       override def run() = locationServices.registerLocationListener(RegisterLocationListenerRequest(LocationEventNotifier, providers))
     }
 
-
     private object TurnOffLocationTracking extends Job {
 
       override def run() = locationServices.removeLocationListener(RemoveLocationListenerRequest(LocationEventNotifier))
     }
-
 
     private object CheckLastLocation extends Job {
 
