@@ -3,6 +3,6 @@
 /.idea/
 .DS_Store
 /target
-/app/target
+/modules/app/target
 /project/project
 /project/target
