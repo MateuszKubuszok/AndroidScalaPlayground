@@ -182,6 +182,7 @@
 -dontnote android.net.http.**
 -dontnote com.facebook.**
 -dontnote org.apache.http.**
+-keep class com.facebook.**
 -keep class com.talkie.client.**
 -dontwarn com.google.common.**
 -dontwarn org.slf4j.**

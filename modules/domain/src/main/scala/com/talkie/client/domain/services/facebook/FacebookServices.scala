@@ -42,8 +42,9 @@ trait FacebookServicesComponentImpl extends FacebookServicesComponent {
 
       override def onCancel() = {
         logger info "Login cancelled"
-        eventBus.notifyEventListeners(NotifyEventListenersRequest(LoginCancelled))
+        eventBus.notifyEventListeners(NotifyEventListenersRequest(LoginCancelled()))
       }
+
       override def onError(error: FacebookException) = {
         logger error ("Login failed", error)
         eventBus.notifyEventListeners(NotifyEventListenersRequest(LoginFailed(error)))

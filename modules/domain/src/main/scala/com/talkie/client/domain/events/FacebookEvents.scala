@@ -13,7 +13,7 @@ object FacebookEvents {
     override def getDetails: Details = result
   }
 
-  case object LoginCancelled extends Event {
+  case class LoginCancelled() extends Event {
 
     override type Details = Unit
 
@@ -25,5 +25,19 @@ object FacebookEvents {
     override type Details = FacebookException
 
     override def getDetails: Details = error
+  }
+
+  case class LoggedOut() extends Event {
+
+    override type Details = Unit
+
+    override def getDetails: Details = ()
+  }
+
+  case class TokenUpdated() extends Event {
+
+    override type Details = Unit
+
+    override def getDetails: Details = ()
   }
 }
