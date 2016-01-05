@@ -8,7 +8,6 @@ import sbt._
 import sbt.Keys._
 
 import scalariform.formatter.preferences._
-//import scoverage.ScoverageKeys._
 import scoverage.ScoverageSbtPlugin
 import org.scalastyle.sbt.ScalastylePlugin._
 
@@ -63,7 +62,6 @@ trait Settings {
     targetSdkVersion   in Android := "23",
     debugIncludesTests in Android := false,
     dexMulti           in Android := true,
-//    transitiveAndroidLibs in Android := false,
 
     // Proguard
     proguardOptions in Android ++= Seq(

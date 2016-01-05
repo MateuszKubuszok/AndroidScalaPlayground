@@ -1,6 +1,4 @@
 import sbt._
-import sbt.Keys._
-import android.Keys._
 
 object Build extends Build {
 
