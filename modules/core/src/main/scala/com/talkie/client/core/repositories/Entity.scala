@@ -5,7 +5,7 @@ import org.joda.time.DateTime
 case class Id[E <: Entity[E]](value: Long)
 
 case class SysInfo(
-  version: Long,
+  version:   Long,
   createdOn: DateTime,
   updatedOn: DateTime
 )

@@ -77,7 +77,7 @@ trait AutomatedAuthNavigation extends Activity {
       (Option(oldAccessToken), Option(currentAccessToken)) match {
         case (None, Some(accessToken)) => onUserLoggedIn(currentAccessToken)
         case (Some(accessToken), None) => onUserLoggedOut(oldAccessToken)
-        case _ => onTokenRefreshed(oldAccessToken, currentAccessToken)
+        case _                         => onTokenRefreshed(oldAccessToken, currentAccessToken)
       }
   }
 }

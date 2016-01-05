@@ -9,7 +9,7 @@ object LocationMessages {
   case class LastKnownLocationResponse(locationOpt: Option[Location])
 
   case class RegisterLocationListenerRequest(
-    listener: LocationListener,
+    listener:  LocationListener,
     providers: Set[LocationProvider]
   )
   case class RegisterLocationListenerResponse(registered: Boolean)

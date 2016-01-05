@@ -117,27 +117,9 @@
 # view res/layout/design_navigation_menu.xml #generated:17
 -keep class android.support.design.internal.NavigationMenuView { <init>(...); }
 
-# view res/layout/app_bar_main.xml #generated:9
--keep class android.support.design.widget.AppBarLayout { <init>(...); }
-
-# view res/layout/app_bar_main.xml #generated:2
--keep class android.support.design.widget.CoordinatorLayout { <init>(...); }
-
-# view res/layout/app_bar_main.xml #generated:20
--keep class android.support.design.widget.FloatingActionButton { <init>(...); }
-
-# view res/layout/activity_main.xml #generated:11
--keep class android.support.design.widget.NavigationView { <init>(...); }
-
 # view res/layout/design_layout_snackbar.xml #generated:18
 # view sw600dp-v13/res/layout-sw600dp-v13/design_layout_snackbar.xml #generated:18
 -keep class android.support.design.widget.Snackbar$SnackbarLayout { <init>(...); }
-
-# view AndroidManifest.xml #generated:16
--keep class android.support.multidex.MultiDexApplication { <init>(...); }
-
-# view res/layout/activity_main.xml #generated:2
--keep class android.support.v4.widget.DrawerLayout { <init>(...); }
 
 # view res/layout/abc_alert_dialog_material.xml #generated:75
 -keep class android.support.v4.widget.NestedScrollView { <init>(...); }
@@ -191,39 +173,11 @@
 -keep class android.support.v7.widget.SearchView$SearchAutoComplete { <init>(...); }
 
 # view res/layout/abc_screen_toolbar.xml #generated:36
-# view res/layout/app_bar_main.xml #generated:12
 -keep class android.support.v7.widget.Toolbar { <init>(...); }
 
 # view res/layout/abc_screen_simple.xml #generated:25
 # view res/layout/abc_screen_simple_overlay_action_mode.xml #generated:32
 -keep class android.support.v7.widget.ViewStubCompat { <init>(...); }
-
-# view AndroidManifest.xml #generated:45
--keep class com.facebook.FacebookActivity { <init>(...); }
-
-# view res/layout/activity_login.xml #generated:14
--keep class com.facebook.login.widget.LoginButton { <init>(...); }
-
-# view AndroidManifest.xml #generated:27
--keep class com.talkie.client.app.activities.init.InitActivity { <init>(...); }
-
-# view AndroidManifest.xml #generated:37
--keep class com.talkie.client.app.activities.login.LoginActivity { <init>(...); }
-
-# view AndroidManifest.xml #generated:41
--keep class com.talkie.client.app.activities.main.MainActivity { <init>(...); }
-
-# view AndroidManifest.xml #generated:50
--keep class com.talkie.client.app.activities.settings.SettingsActivity { <init>(...); }
-
-# view res/xml/pref_headers.xml #generated:15
--keep class com.talkie.client.app.activities.settings.SettingsActivity$DataSyncPreferenceFragment { <init>(...); }
-
-# view res/xml/pref_headers.xml #generated:5
--keep class com.talkie.client.app.activities.settings.SettingsActivity$GeneralPreferenceFragment { <init>(...); }
-
-# view res/xml/pref_headers.xml #generated:10
--keep class com.talkie.client.app.activities.settings.SettingsActivity$NotificationPreferenceFragment { <init>(...); }
 
 # Copyright (C) 2015 The Android Open Source Project
 #

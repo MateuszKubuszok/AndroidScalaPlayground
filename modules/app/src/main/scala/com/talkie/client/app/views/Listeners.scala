@@ -8,10 +8,10 @@ import android.view.View.OnClickListener
 trait Listeners {
 
   final protected def makeLocationListener(
-    onLocationChangedF: Location => Unit = (_) => (),
-    onStatusChangedF: (String, Int, Bundle) => Unit = (_, _, _) => (),
-    onProviderEnabledF: String => Unit = (_) => (),
-    onProviderDisabledF: String => Unit = (_) => ()
+    onLocationChangedF:  Location => Unit              = (_) => (),
+    onStatusChangedF:    (String, Int, Bundle) => Unit = (_, _, _) => (),
+    onProviderEnabledF:  String => Unit                = (_) => (),
+    onProviderDisabledF: String => Unit                = (_) => ()
   ) = new LocationListener {
 
     override def onLocationChanged(location: Location): Unit = onLocationChangedF(location)

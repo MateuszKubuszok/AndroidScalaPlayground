@@ -1,8 +1,4 @@
-*.iml
-/local.properties
-/.idea/
-.DS_Store
-/target
-/modules/app/target
-/project/project
-/project/target
+.idea
+modules/*/target/
+project/project/
+target/

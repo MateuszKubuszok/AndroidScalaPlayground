@@ -6,9 +6,9 @@ import android.support.v7.app.{ ActionBarDrawerToggle, AppCompatActivity }
 import android.view.{ MenuItem, Menu }
 import com.talkie.client.R
 import com.talkie.client.app.activities.common.Controller
-import com.talkie.client.app.views.Listeners
 import com.talkie.client.domain.services.facebook.FacebookMessages.LogoutRequest
 import com.talkie.client.domain.services.facebook.FacebookServicesComponent
+import com.talkie.client.app.views.Listeners
 
 trait MainController extends Controller {
   self: AppCompatActivity with FacebookServicesComponent with Listeners with NavigationView.OnNavigationItemSelectedListener =>
@@ -62,12 +62,12 @@ trait MainController extends Controller {
 
   final protected def onNavigationItemSelectedEvent(item: MenuItem) = {
     item.getItemId match {
-      case R.id.nav_camera =>
-      case R.id.nav_gallery =>
+      case R.id.nav_camera    =>
+      case R.id.nav_gallery   =>
       case R.id.nav_slideshow =>
-      case R.id.nav_manage =>
-      case R.id.nav_share =>
-      case R.id.nav_send =>
+      case R.id.nav_manage    =>
+      case R.id.nav_share     =>
+      case R.id.nav_send      =>
     }
 
     drawerOpt foreach { _.closeDrawer(GravityCompat.START) }
