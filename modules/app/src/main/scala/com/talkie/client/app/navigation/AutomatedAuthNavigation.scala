@@ -71,13 +71,15 @@ trait AutomatedAuthNavigation extends Activity {
     startActivity(intent)
   }
 
-  private lazy val accessTokenTracker = new AccessTokenTracker {
+  private object accessTokenTracker extends AccessTokenTracker {
 
-    override def onCurrentAccessTokenChanged(oldAccessToken: AccessToken, currentAccessToken: AccessToken) =
+    override def onCurrentAccessTokenChanged(oldAccessToken: AccessToken, currentAccessToken: AccessToken) = {
+      logger trace s"Access token changed ($oldAccessToken) => ($currentAccessToken)"
       (Option(oldAccessToken), Option(currentAccessToken)) match {
         case (None, Some(accessToken)) => onUserLoggedIn(currentAccessToken)
         case (Some(accessToken), None) => onUserLoggedOut(oldAccessToken)
         case _                         => onTokenRefreshed(oldAccessToken, currentAccessToken)
       }
+    }
   }
 }

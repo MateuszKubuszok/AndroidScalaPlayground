@@ -69,7 +69,8 @@ trait Settings {
       "-dontnote android.net.http.**",
       "-dontnote com.facebook.**",
       "-dontnote org.apache.http.**",
-      // empty R classes ;)
+      // classes that should stay
+      "-keep class com.facebook.**",
       "-keep class com.talkie.client.**",
       // removed unused
       "-dontwarn com.google.common.**",

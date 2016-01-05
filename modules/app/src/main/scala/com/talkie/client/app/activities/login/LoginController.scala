@@ -25,9 +25,8 @@ trait LoginController extends Controller {
   }
 
   final protected def onActivityResultEvent(requestCode: Int, resultCode: Int, data: Intent) = asyncAction {
-    facebookServices.processActivityResult(ProcessActivityResultRequest(requestCode, resultCode, data)) map { result =>
-      if (result.handled) logger trace "ActivityResult handled successfully"
-      else logger error "ActivityResult not handled"
-    }
+    val result = facebookServices.processActivityResult(ProcessActivityResultRequest(requestCode, resultCode, data))
+    if (result.handled) logger trace "ActivityResult handled successfully"
+    else logger error "ActivityResult not handled"
   }
 }
