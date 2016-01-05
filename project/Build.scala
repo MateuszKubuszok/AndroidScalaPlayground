@@ -8,16 +8,22 @@ object Build extends Build {
   import Settings._
 
   lazy val core = project.from("core")
+    .setName("client.core")
+    .setDescription("Talkie core components")
     .configureAsLibrary
     .configureModule
 
   lazy val domain = project.from("domain")
+    .setName("client.domain")
+    .setDescription("Talkie domain components")
     .configureAsLibrary
     .configureModule
     .dependsOnLibraries(core)
 
   lazy val app = project.from("app")
+    .setName("client.app")
+    .setDescription("Talkie application")
     .configureAsApplication
-    .dependsOnLibraries(core, domain)
     .configureModule
+    .dependsOnLibraries(core, domain)
 }
