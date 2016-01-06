@@ -8,9 +8,7 @@ import com.talkie.client.domain.jobs.LocationJobsComponent
 private[initialization] trait LocationInitializer extends Initialization {
   self: ContextComponent with LoggerComponent with SchedulerComponent with LocationJobsComponent =>
 
-  override def initialize() {
-    super.initialize()
-
+  onInitialization {
     implicit val c = context
 
     scheduler.schedulePeriodicJob(locationJobs.turnOnLocationTrackingJob)

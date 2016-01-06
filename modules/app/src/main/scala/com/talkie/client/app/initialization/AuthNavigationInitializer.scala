@@ -9,9 +9,7 @@ import com.talkie.client.core.services.ContextComponent
 private[initialization] trait AuthNavigationInitializer extends Initialization {
   self: ContextComponent with EventBusComponent with LoggerComponent with AuthNavigationComponent =>
 
-  override def initialize() {
-    super.initialize()
-
+  onInitialization {
     implicit val c = context
 
     eventBus.registerEventListener(RegisterEventListenerRequest(authNavigation.onUserLoggedIn))
