@@ -27,6 +27,7 @@ trait Dependencies {
 
   // scala
   val scalaLib = "org.scala-lang" % "scala-library" % scalaVersionUsed
+  val scaloid = "org.scaloid" %% "scaloid" % "4.1"
 
   // sql
   val sqlDroid = "org.sqldroid" % "sqldroid" % "1.0.3"
@@ -51,7 +52,7 @@ trait Dependencies {
 
   val androidDeps = Seq(annotations, appcompat, design, support, recyclerview, multidex)
 
-  val mainDeps = Seq(scalaLib, sqlDroid, slick, shapeless, joda, jodaConvert, facebookSdk) map { library =>
+  val mainDeps = Seq(scalaLib, scaloid, sqlDroid, slick, shapeless, joda, jodaConvert, facebookSdk) map { library =>
     library excludeAll ExclusionRule(organization = sdkPrefix)
   }
 

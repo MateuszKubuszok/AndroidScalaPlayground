@@ -58,14 +58,12 @@ trait FacebookServicesComponentImpl extends FacebookServicesComponent {
 
     override val configureLogin = Service.async { request: ConfigureLoginRequest =>
       logger trace "Requested loginButton configuration"
-      val result = for {
-        loginButton <- request.loginButtonOpt
-      } yield {
-        loginButton.setReadPermissions(permissions: _*)
-        loginButton.registerCallback(callBackManager, callback)
-      }
 
-      ConfigureLoginResponse(result.isDefined)
+      val loginButton = request.loginButton
+      loginButton.setReadPermissions(permissions: _*)
+      loginButton.registerCallback(callBackManager, callback)
+
+      ConfigureLoginResponse()
     }
 
     override val logout = Service.async { request: LogoutRequest =>

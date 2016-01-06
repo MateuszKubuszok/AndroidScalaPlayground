@@ -8,49 +8,53 @@ import android.content.{ Context, Intent }
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.{ Build, Bundle }
-import android.preference.{ ListPreference, Preference, PreferenceActivity, PreferenceFragment, PreferenceManager, RingtonePreference }
+import android.preference._
 import android.text.TextUtils
 import android.view.MenuItem
 import com.talkie.client.R
+import com.talkie.client.app.activities.common.Listeners
 
 object SettingsActivity {
 
   private def isXLargeTablet(context: Context) =
     (context.getResources.getConfiguration.screenLayout & SCREENLAYOUT_SIZE_MASK) >= SCREENLAYOUT_SIZE_XLARGE
 
-  private lazy val bindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
+  private lazy val bindPreferenceSummaryToValueListener = Listeners.OnPreferenceClassListener(
+    onPreferenceChangeFn = { (preference: Preference, value: Any) =>
+    val stringValue = value.toString
 
-    def onPreferenceChange(preference: Preference, value: AnyRef) = {
-      val stringValue = value.toString
-
-      val name = preference match {
-        case listPreference: ListPreference =>
-          val index = listPreference.findIndexOfValue(stringValue)
-          if (index >= 0) {
-            val entries = listPreference.getEntries
-            entries(index)
-          } else null
-        case _: RingtonePreference =>
-          if (TextUtils.isEmpty(stringValue))
-            preference.getContext.getString(R.string.pref_ringtone_silent)
-          else
-            Option {
-              RingtoneManager.getRingtone(preference.getContext, Uri.parse(stringValue))
-            } map { ringtone =>
-              ringtone.getTitle(preference.getContext)
-            } orNull
-        case _ => stringValue
-      }
-
-      preference.setSummary(name)
-
-      true
+    val name = preference match {
+      case listPreference: ListPreference =>
+        val index = listPreference.findIndexOfValue(stringValue)
+        if (index >= 0) {
+          val entries = listPreference.getEntries
+          entries(index)
+        } else null
+      case _: RingtonePreference =>
+        if (TextUtils.isEmpty(stringValue)) {
+          preference.getContext.getString(R.string.pref_ringtone_silent)
+        } else {
+          Option {
+            RingtoneManager.getRingtone(preference.getContext, Uri.parse(stringValue))
+          } map { ringtone =>
+            ringtone.getTitle(preference.getContext)
+          } orNull
+        }
+      case _ => stringValue
     }
+
+    preference.setSummary(name)
+
+    true
   }
+  )
 
   private def bindPreferenceSummaryToValue(preference: Preference) {
     preference.setOnPreferenceChangeListener(bindPreferenceSummaryToValueListener)
-    bindPreferenceSummaryToValueListener.onPreferenceChange(preference, PreferenceManager.getDefaultSharedPreferences(preference.getContext).getString(preference.getKey, ""))
+    bindPreferenceSummaryToValueListener.onPreferenceChange(
+      preference,
+      PreferenceManager.getDefaultSharedPreferences(preference.getContext).getString(preference.getKey, "")
+    )
   }
 
   @TargetApi(Build.VERSION_CODES.HONEYCOMB)

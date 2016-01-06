@@ -8,8 +8,8 @@ object FacebookMessages {
   case class CheckLoggedStatusRequest()
   case class CheckLoggedStatusResponse(isLogged: Boolean)
 
-  case class ConfigureLoginRequest(loginButtonOpt: Option[LoginButton])
-  case class ConfigureLoginResponse(success: Boolean)
+  case class ConfigureLoginRequest(loginButton: LoginButton)
+  case class ConfigureLoginResponse()
 
   case class LogoutRequest()
   case class LogoutResponse()

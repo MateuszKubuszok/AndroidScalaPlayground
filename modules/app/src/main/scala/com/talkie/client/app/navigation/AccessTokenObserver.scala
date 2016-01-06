@@ -1,37 +1,30 @@
 package com.talkie.client.app.navigation
 
-import android.app.Activity
-import android.content.Intent
-import android.os.Bundle
 import com.facebook.{ AccessToken, AccessTokenTracker }
+import com.talkie.client.app.activities.common.RichActivity
 import com.talkie.client.core.events.EventBusComponent
 import com.talkie.client.core.events.EventMessages.NotifyEventListenersRequest
 import com.talkie.client.core.logging.LoggerComponent
 import com.talkie.client.core.services.ContextComponent
 import com.talkie.client.domain.events.FacebookEvents.{ TokenUpdated, LoggedOut }
-import com.talkie.client.domain.services.facebook.FacebookMessages.CheckLoggedStatusRequest
-import com.talkie.client.domain.services.facebook.FacebookServicesComponent
 
-trait AccessTokenObserver extends Activity {
-  self: ContextComponent with EventBusComponent with LoggerComponent =>
+trait AccessTokenObserver {
+  self: RichActivity with ContextComponent with EventBusComponent with LoggerComponent =>
 
   private implicit val c = context
   private implicit val ec = context.executionContext
 
-  override protected def onStart() {
-    super.onStart()
+  onStart {
     accessTokenTracker.startTracking()
     logger trace "Started tracing AccessTokens"
   }
 
-  override protected def onRestart() {
-    super.onRestart()
+  onRestart {
     accessTokenTracker.startTracking()
     logger trace "Started tracing AccessTokens"
   }
 
-  override protected def onDestroy() {
-    super.onDestroy()
+  onDestroy {
     accessTokenTracker.stopTracking()
     logger trace "Stopped tracing AccessTokens"
   }

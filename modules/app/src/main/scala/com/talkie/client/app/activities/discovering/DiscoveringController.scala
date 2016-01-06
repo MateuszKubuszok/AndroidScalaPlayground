@@ -1,51 +1,61 @@
 package com.talkie.client.app.activities.discovering
 
-import android.support.design.widget.{ NavigationView, Snackbar }
+import android.support.design.widget.Snackbar
+import android.support.design.widget.NavigationView.OnNavigationItemSelectedListener
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.{ ActionBarDrawerToggle, AppCompatActivity }
-import android.view.{ MenuItem, Menu }
+import android.view.{ View, MenuItem, Menu }
 import com.talkie.client.R
-import com.talkie.client.app.activities.common.Controller
+import com.talkie.client.TR
+import com.talkie.client.app.activities.common.{ RichActivity, Listeners, Controller }
 import com.talkie.client.domain.services.facebook.FacebookMessages.LogoutRequest
 import com.talkie.client.domain.services.facebook.FacebookServicesComponent
-import com.talkie.client.app.views.Listeners
 
 trait DiscoveringController extends Controller {
-  self: AppCompatActivity with FacebookServicesComponent with Listeners with NavigationView.OnNavigationItemSelectedListener =>
+  self: AppCompatActivity with RichActivity with FacebookServicesComponent with OnNavigationItemSelectedListener =>
 
   private implicit val c = context
+
+  protected lazy val drawerLayout = findView(TR.drawer_layout)
+  protected lazy val floatingActionButton = findView(TR.fab)
+  protected lazy val navigationView = findView(TR.nav_view)
+  protected lazy val toolbar = findView(TR.toolbar)
 
   final protected def onCreateEvent() = {
     setContentView(R.layout.activity_discovering)
 
-    toolbarOpt foreach setSupportActionBar
+    setSupportActionBar(toolbar)
 
-    fabOpt foreach setOnClickListener {
-      Snackbar.make(_, "Replace with your own action", Snackbar.LENGTH_LONG)
-        .setAction("Action", null)
-        .show()
-    }
+    floatingActionButton.setOnClickListener(new Listeners.OnClickListener {
+      override def onClick(view: View) {
+        Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+          .setAction("Action", null)
+          .show()
+      }
+    })
 
-    for {
-      toolbar <- toolbarOpt
-      drawer <- drawerOpt
-      toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
-    } {
-      drawer.setDrawerListener(toggle)
-      toggle.syncState()
-    }
+    val toggle = new ActionBarDrawerToggle(
+      this,
+      drawerLayout,
+      toolbar,
+      R.string.navigation_drawer_open,
+      R.string.navigation_drawer_close
+    )
+    drawerLayout.setDrawerListener(toggle)
+    toggle.syncState()
 
-    navigationOpt foreach { _.setNavigationItemSelectedListener(this) }
+    navigationView.setNavigationItemSelectedListener(this)
   }
 
-  final protected def onBackPressedEvent() = drawerOpt exists { drawer =>
-    if (drawer.isDrawerOpen(GravityCompat.START)) {
-      drawer.closeDrawer(GravityCompat.START)
+  final protected def onBackPressedEvent() =
+    if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+      drawerLayout.closeDrawer(GravityCompat.START)
       true
-    } else false
-  }
+    } else {
+      false
+    }
 
-  final protected def onCreateOptionsMenuEvent(menu: Menu): Boolean = {
+  final protected def onCreateOptionsMenuEvent(menu: Menu) = {
     getMenuInflater.inflate(R.menu.main, menu)
     true
   }
@@ -70,7 +80,7 @@ trait DiscoveringController extends Controller {
       case R.id.nav_send      =>
     }
 
-    drawerOpt foreach { _.closeDrawer(GravityCompat.START) }
+    drawerLayout.closeDrawer(GravityCompat.START)
 
     true
   }
