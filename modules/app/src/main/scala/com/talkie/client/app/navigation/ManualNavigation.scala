@@ -9,7 +9,7 @@ import org.scaloid.common._
 trait ManualNavigation {
   self: RichActivity =>
 
-  implicit val aContext: android.content.Context = ctx
+  private implicit val context: android.content.Context = ctx
 
   protected def loginActivity() = SIntent[LoginActivity]
 

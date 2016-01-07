@@ -6,20 +6,22 @@ import com.talkie.client.domain.services.facebook.{ FacebookServicesComponent, F
 import FacebookMessages.{ ConfigureLoginRequest, ProcessActivityResultRequest }
 
 trait LoginController extends Controller {
-  self: RichActivity with FacebookServicesComponent =>
+  self: RichActivity with FacebookServicesComponent with LoginViews =>
 
   implicit val c = context
   implicit val ec = context.executionContext
 
-  protected lazy val loginButton = findView(TR.login_button)
-
   onCreate {
-    setContentView(R.layout.activity_login)
+    //    setContentView(R.layout.activity_login)
+    contentView = loginLayout
   }
 
   onPostCreate {
     asyncAction {
+      //      facebookServices.configureLogin(ConfigureLoginRequest(findView(TR.login_button)))
       facebookServices.configureLogin(ConfigureLoginRequest(loginButton))
+      logger trace s"layout => ${loginLayout.getChildCount}"
+      logger trace s"loginButton => ${loginButton.getParent}"
     }
   }
 

@@ -7,5 +7,6 @@ import com.talkie.client.app.initialization.AppInitialization
 class MainActivity
   extends AppCompatActivity
   with BaseActivity
-  with MainController
   with AppInitialization
+  with MainController
+  with MainViewsImpl

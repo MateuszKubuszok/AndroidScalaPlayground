@@ -7,3 +7,4 @@ class LoginActivity
   extends AppCompatActivity
   with BaseActivity
   with LoginController
+  with LoginViewsImpl
