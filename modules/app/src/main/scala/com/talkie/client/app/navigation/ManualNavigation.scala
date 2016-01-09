@@ -14,8 +14,8 @@ trait ManualNavigation {
   protected def loginActivity() = SIntent[LoginActivity]
 
   protected def discoveringActivity() = SIntent[DiscoveringActivity]
-  protected def startDiscoveringActivity() = startService[DiscoveringActivity]
+  protected def startDiscoveringActivity() = startActivity[DiscoveringActivity]
 
   protected def settingsActivity() = SIntent[SettingsActivity]
-  protected def startSettingsActivity() = startService[SettingsActivity]
+  protected def startSettingsActivity() = startActivity[SettingsActivity]
 }
