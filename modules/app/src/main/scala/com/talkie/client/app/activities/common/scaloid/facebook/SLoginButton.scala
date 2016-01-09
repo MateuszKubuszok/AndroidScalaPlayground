@@ -1,10 +1,10 @@
-package com.talkie.client.app.activities.common.utils
+package com.talkie.client.app.activities.common.scaloid.facebook
 
 import android.content.Context
 import com.facebook.login.widget.LoginButton
 import org.scaloid.common._
 
-class SLoginButton()(implicit context: android.content.Context, parentVGroup: TraitViewGroup[_] = null)
+class SLoginButton()(implicit context: Context, parentVGroup: TraitViewGroup[_] = null)
     extends LoginButton(context) with TraitButton[SLoginButton] {
 
   def basis = this
@@ -30,7 +30,7 @@ class SLoginButton()(implicit context: android.content.Context, parentVGroup: Tr
 }
 
 object SLoginButton extends TextViewCompanion[SLoginButton] {
-  def apply[LP <: ViewGroupLayoutParams[_, SLoginButton]]()(implicit context: android.content.Context, defaultLayoutParam: SLoginButton => LP): SLoginButton = {
+  def apply[LP <: ViewGroupLayoutParams[_, SLoginButton]]()(implicit context: Context, defaultLayoutParam: SLoginButton => LP): SLoginButton = {
     val v = new SLoginButton
     v.<<.parent.+=(v)
     v

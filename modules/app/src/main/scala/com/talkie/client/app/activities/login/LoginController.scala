@@ -11,17 +11,9 @@ trait LoginController extends Controller {
   implicit val c = context
   implicit val ec = context.executionContext
 
-  onCreate {
-    //    setContentView(R.layout.activity_login)
-    contentView = loginLayout
-  }
-
   onPostCreate {
     asyncAction {
-      //      facebookServices.configureLogin(ConfigureLoginRequest(findView(TR.login_button)))
       facebookServices.configureLogin(ConfigureLoginRequest(loginButton))
-      logger trace s"layout => ${loginLayout.getChildCount}"
-      logger trace s"loginButton => ${loginButton.getParent}"
     }
   }
 

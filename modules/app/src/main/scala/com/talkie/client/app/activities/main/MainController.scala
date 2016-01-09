@@ -6,10 +6,6 @@ import com.talkie.client.app.navigation.{ AccessTokenObserver, AuthNavigationCom
 trait MainController extends Controller {
   self: RichActivity with AccessTokenObserver with AuthNavigationComponent with MainViews =>
 
-  onCreate {
-    contentView = mainLayout
-  }
-
   onStart {
     asyncAction {
       authNavigation.moveToMainIfLogged()

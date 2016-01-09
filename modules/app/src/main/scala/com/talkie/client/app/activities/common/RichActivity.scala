@@ -2,11 +2,14 @@ package com.talkie.client.app.activities.common
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.{ MenuItem, Menu }
 import org.scaloid.common.SActivity
 
 import scala.collection.mutable.ArrayBuffer
 
 trait RichActivity extends SActivity {
+
+  // onPostCreate
 
   override protected def onPostCreate(savedInstanceState: Bundle) {
     super.onPostCreate(savedInstanceState)
@@ -21,6 +24,8 @@ trait RichActivity extends SActivity {
     el
   }
 
+  // onRestart
+
   override protected def onRestart() {
     super.onRestart()
     onRestartBodies.foreach(_())
@@ -34,6 +39,8 @@ trait RichActivity extends SActivity {
     el
   }
 
+  // on ActivityResult
+
   override protected def onActivityResult(requestCode: Int, resultCode: Int, data: Intent) = {
     super.onActivityResult(requestCode, resultCode, data)
     onActivityResultBodies.foreach(_(requestCode, resultCode, data))
@@ -43,6 +50,45 @@ trait RichActivity extends SActivity {
 
   protected def onActivityResult(body: (Int, Int, Intent) => Any) = {
     onActivityResultBodies += body
+    body
+  }
+
+  // onBackPressed
+
+  override protected def onBackPressed() =
+    if (!(onBackPressedBodies map (_()) exists identity)) {
+      super.onBackPressed()
+    }
+
+  protected val onBackPressedBodies = new ArrayBuffer[() => Boolean]
+
+  protected def onBackPressed(body: => Boolean) = {
+    val el = body _
+    onBackPressedBodies += el
+    el
+  }
+
+  // onCreateOptionsMenu
+
+  override protected def onCreateOptionsMenu(menu: Menu) =
+    (onCreateOptionsMenuBodies map (_(menu)) exists identity) || super.onCreateOptionsMenu(menu)
+
+  protected val onCreateOptionsMenuBodies = new ArrayBuffer[Menu => Boolean]
+
+  protected def onCreateOptionsMenu(body: Menu => Boolean) = {
+    onCreateOptionsMenuBodies += body
+    body
+  }
+
+  // onOptionsItemSelected
+
+  override protected def onOptionsItemSelected(item: MenuItem) =
+    (onOptionsItemSelectedBodies map (_(item)) exists identity) || super.onOptionsItemSelected(item)
+
+  protected val onOptionsItemSelectedBodies = new ArrayBuffer[MenuItem => Boolean]
+
+  protected def onOptionsItemSelected(body: MenuItem => Boolean) = {
+    onOptionsItemSelectedBodies += body
     body
   }
 }
