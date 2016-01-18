@@ -1,4 +1,13 @@
+# IntelliJ
 .idea
+# Android Studio
+*.iml
+# Gradle
+modules/*/.gradle/
+modules/*/local.properties
+modules/*/build/
+modules/*/gradle/
+# SBT
 modules/*/target/
 project/project/
 target/
