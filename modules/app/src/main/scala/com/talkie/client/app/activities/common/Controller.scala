@@ -1,9 +1,10 @@
 package com.talkie.client.app.activities.common
 
-import com.talkie.client.TypedFindView
-import com.talkie.client.core.logging.LoggerComponent
 import com.talkie.client.app.navigation.ManualNavigation
+import com.talkie.client.core.logging.LoggerComponent
 import com.talkie.client.core.services.ContextComponent
+import com.talkie.client.views.TypedFindView
+import com.talkie.client.views.common.RichActivity
 
 import scala.concurrent.Future
 

@@ -59,6 +59,7 @@ trait Settings {
     // Android
     packagingOptions   in Android := PackagingOptions(Nil, Nil, Seq("META-INF/NOTICE.txt", "META-INF/LICENSE.txt")),
     platformTarget     in Android := "android-23",
+    minSdkVersion      in Android := "23",
     targetSdkVersion   in Android := "23",
     debugIncludesTests in Android := false,
     dexMulti           in Android := true,

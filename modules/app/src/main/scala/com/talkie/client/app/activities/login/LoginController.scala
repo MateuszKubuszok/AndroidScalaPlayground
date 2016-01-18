@@ -1,8 +1,9 @@
 package com.talkie.client.app.activities.login
 
-import com.talkie.client.{ TR, R }
-import com.talkie.client.app.activities.common.{ RichActivity, Controller }
+import com.talkie.client.app.activities.common.Controller
 import com.talkie.client.domain.services.facebook.{ FacebookServicesComponent, FacebookMessages }
+import com.talkie.client.views.common.RichActivity
+import com.talkie.client.views.login.LoginViews
 import FacebookMessages.{ ConfigureLoginRequest, ProcessActivityResultRequest }
 
 trait LoginController extends Controller {

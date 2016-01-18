@@ -1,12 +1,12 @@
 package com.talkie.client.app.navigation
 
 import com.facebook.{ AccessToken, AccessTokenTracker }
-import com.talkie.client.app.activities.common.RichActivity
 import com.talkie.client.core.events.EventBusComponent
 import com.talkie.client.core.events.EventMessages.NotifyEventListenersRequest
 import com.talkie.client.core.logging.LoggerComponent
 import com.talkie.client.core.services.ContextComponent
 import com.talkie.client.domain.events.FacebookEvents.{ TokenUpdated, LoggedOut }
+import com.talkie.client.views.common.RichActivity
 
 trait AccessTokenObserver {
   self: RichActivity with ContextComponent with EventBusComponent with LoggerComponent =>

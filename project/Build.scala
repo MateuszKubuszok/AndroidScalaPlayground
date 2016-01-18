@@ -1,3 +1,4 @@
+import android.Keys._
 import sbt._
 
 object Build extends Build {
@@ -18,10 +19,17 @@ object Build extends Build {
     .configureModule
     .dependsOnLibraries(core)
 
+  lazy val views = project.from("views")
+    .setName("client.views")
+    .setDescription("Talkie views")
+    .configureAsLibrary
+    .configureModule
+    .settings(typedResources := true)
+
   lazy val app = project.from("app")
     .setName("client.app")
     .setDescription("Talkie application")
     .configureAsApplication
     .configureModule
-    .dependsOnLibraries(core, domain)
+    .dependsOnLibraries(core, domain, views)
 }

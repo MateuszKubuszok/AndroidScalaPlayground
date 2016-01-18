@@ -1,9 +1,9 @@
 package com.talkie.client.app.navigation
 
-import com.talkie.client.app.activities.common.RichActivity
 import com.talkie.client.app.activities.login.LoginActivity
 import com.talkie.client.app.activities.discovering.DiscoveringActivity
 import com.talkie.client.app.activities.settings.SettingsActivity
+import com.talkie.client.views.common.RichActivity
 import org.scaloid.common._
 
 trait ManualNavigation {
