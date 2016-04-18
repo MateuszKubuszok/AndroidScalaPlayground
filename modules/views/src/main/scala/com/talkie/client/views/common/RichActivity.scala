@@ -7,9 +7,6 @@ import org.scaloid.common.SActivity
 
 import scala.collection.mutable.ArrayBuffer
 
-/**
- * Created by dev on 1/18/16.
- */
 trait RichActivity extends SActivity {
 
   // onPostCreate

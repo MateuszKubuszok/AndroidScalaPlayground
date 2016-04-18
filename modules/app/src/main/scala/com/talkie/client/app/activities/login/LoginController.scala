@@ -4,6 +4,7 @@ import com.talkie.client.app.activities.common.Controller
 import com.talkie.client.domain.services.facebook.{ FacebookServicesComponent, FacebookMessages }
 import com.talkie.client.views.common.RichActivity
 import com.talkie.client.views.login.LoginViews
+import com.talkie.client.views.R
 import FacebookMessages.{ ConfigureLoginRequest, ProcessActivityResultRequest }
 
 trait LoginController extends Controller {
@@ -11,6 +12,10 @@ trait LoginController extends Controller {
 
   implicit val c = context
   implicit val ec = context.executionContext
+
+  onCreate {
+    setContentView(R.layout.activity_login)
+  }
 
   onPostCreate {
     asyncAction {

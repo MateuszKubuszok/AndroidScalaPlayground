@@ -5,11 +5,13 @@ import com.talkie.client.core.logging.LoggerComponent
 import com.talkie.client.core.services.ContextComponent
 import com.talkie.client.views.TypedFindView
 import com.talkie.client.views.common.RichActivity
+import com.talkie.client.views.common.views.TypedFindLayout
 
 import scala.concurrent.Future
 
 trait Controller
     extends TypedFindView
+    with TypedFindLayout
     with ContextComponent
     with LoggerComponent
     with ManualNavigation {

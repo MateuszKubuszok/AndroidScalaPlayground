@@ -1,49 +1,19 @@
 package com.talkie.client.views.login
 
-import android.view.Gravity
-import com.talkie.client.views.common.RichActivity
-import com.talkie.client.views.common.scaloid.facebook.SLoginButton
-import com.talkie.client.views.common.views.{ CommonViews, DelayedViews }
-import org.scaloid.common._
+import android.widget.RelativeLayout
+import com.facebook.login.widget.LoginButton
+import com.talkie.client.views.common.views.TypedFindLayout
+import com.talkie.client.views.{ TR, TypedFindView }
 
 trait LoginViews {
 
-  protected def loginButton: SLoginButton
-  protected def layout: SRelativeLayout
+  protected def loginButton: LoginButton
+  protected def layout: RelativeLayout
 }
 
-trait LoginViewsImpl extends LoginViews with CommonViews with DelayedViews {
-  self: RichActivity =>
+trait LoginViewsImpl extends LoginViews {
+  self: TypedFindView with TypedFindLayout =>
 
-  private implicit val context: android.content.Context = ctx
-
-  private val loginButtonDelayed = delay[SLoginButton]()
-  private val layoutDelayed = delay[SRelativeLayout]()
-
-  override protected lazy val layout = getDelayed(layoutDelayed)
-  override protected lazy val loginButton = getDelayed(loginButtonDelayed)
-
-  initiateWith(layoutDelayed) {
-    new SRelativeLayout {
-      fill
-      padding(
-        dimension.activityHorizontalMargin,
-        dimension.activityVerticalMargin,
-        dimension.activityHorizontalMargin,
-        dimension.activityVerticalMargin
-      )
-      gravity = Gravity.CENTER
-
-      new STextView("Sign in") {
-        fw
-      } appendTo this
-
-      loginButtonDelayed resolve new SLoginButton {
-        fw
-      }.<<
-        .marginTop(dimension.loginButtonVerticalMargin)
-        .marginBottom(dimension.loginButtonVerticalMargin)
-        .>> appendTo this
-    }
-  }
+  override protected lazy val layout = findLayout(TR.layout.activity_login)
+  override protected lazy val loginButton = findView(TR.login_button)
 }

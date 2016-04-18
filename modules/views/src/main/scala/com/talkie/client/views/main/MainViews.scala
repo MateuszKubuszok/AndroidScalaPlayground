@@ -1,33 +1,16 @@
 package com.talkie.client.views.main
 
-import android.view.Gravity
-import com.talkie.client.views.common.RichActivity
-import com.talkie.client.views.common.views.{ CommonViews, DelayedViews }
-import org.scaloid.common._
+import android.widget.LinearLayout
+import com.talkie.client.views.common.views.TypedFindLayout
+import com.talkie.client.views.{ TR, TypedFindView }
 
 trait MainViews {
 
-  protected def layout: SVerticalLayout
+  protected def layout: LinearLayout
 }
 
-trait MainViewsImpl extends MainViews with CommonViews with DelayedViews {
-  self: RichActivity =>
+trait MainViewsImpl extends MainViews {
+  self: TypedFindView with TypedFindLayout =>
 
-  private implicit val context: android.content.Context = ctx
-
-  private val layoutDelayed = delay[SVerticalLayout]()
-
-  override protected lazy val layout = getDelayed(layoutDelayed)
-
-  initiateWith(layoutDelayed) {
-    new SVerticalLayout {
-      fill
-      gravity = Gravity.CENTER
-
-      new STextView("Please wait, loading...") {
-        fill
-        gravity = Gravity.CENTER
-      } appendTo this
-    }
-  }
+  override protected lazy val layout = findLayout(TR.layout.activity_main)
 }
