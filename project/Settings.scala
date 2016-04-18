@@ -52,7 +52,7 @@ trait Settings {
       "-Ywarn-dead-code",
       "-Ywarn-infer-any",
       "-Ywarn-unused-import",
-      "-Xfatal-warnings",
+      //"-Xfatal-warnings",  // TR.scala generates deprecations :(
       "-Xlint"
     ),
 
@@ -137,6 +137,12 @@ object Settings extends Settings {
     def configureAsLibrary: Project = project.settings(androidBuildAar:_*)
       .settings(typedResources := false)
       .settings(transitiveAndroidLibs := false)
+  }
+
+  implicit class ViewsConfigurator(project: Project) {
+
+    def configureAsViews: Project = project
+      .settings(typedResources := true)
   }
 
   implicit class ModuleConfigurator(project: Project) {
