@@ -5,7 +5,7 @@ Work in progress.
 ## Development
 
   * Install Android SDK and add its location to env/path variable `ANDROID_HOME`,
-  * Install SBT 13.9,
+  * Install SBT 13.11,
   * Install IntelliJ Idea 15,
   * Install Scala and SBT plugins in IntelliJ,
   * For editing sources:
@@ -24,7 +24,7 @@ Work in progress.
 
  * For watching logs:
  
-    * build application in debug mode and deploy: `sbt "project app" android:packageDebug android:run`,
+    * build application in debug mode and deploy: `sbt "project app" android:debug`,
     * within IntelliJ either
 
       * open *Android* view,
@@ -35,8 +35,8 @@ Work in progress.
     
  * For debugging:
  
-   * deploy debug app as above,
-   * check the right port for application using *Android Device Monitor* (numbers next to `com.talkie.client` on last
+    * deploy debug app as above,
+    * check the right port for application using *Android Device Monitor* (numbers next to `com.talkie.client` on last
      column),
-   * configure *Remote Debug* *Run Configuration*: *Host* -> `localhost`, *Port* -> `port that you found`,
-   * run the task and watch application crash due to bug in some library, because god hates us all. 
+    * configure *Remote Debug* *Run Configuration*: *Host* -> `localhost`, *Port* -> `port that you found`,
+    * run the task and start debugging. 
