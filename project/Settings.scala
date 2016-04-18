@@ -23,7 +23,7 @@ trait Settings {
 
   private val disabledTestTag = TestTag.DisabledTest
 
-  private val modulesSettings = scalariformSettings ++ Seq(
+  private val modulesSettings = scalariformSettings ++ androidBuild ++ Seq(
     // package
     organization             := "com.talkie",
     version                  := "0.1.0-SNAPSHOT",
@@ -63,6 +63,7 @@ trait Settings {
     targetSdkVersion   in Android := "23",
     debugIncludesTests in Android := false,
     dexMulti           in Android := true,
+    typedResources     in Android := false,
 
     // Proguard
     proguardOptions in Android ++= Seq(
@@ -84,6 +85,7 @@ trait Settings {
     // Libraries
     libraryDependencies ++= (androidDeps ++ mainDeps),
     libraryDependencies ++= testDeps map (_ % "test"),
+    transitiveAndroidLibs := false,
 
     // tests
     testOptions in Test += excludeTags(disabledTestTag),
@@ -127,27 +129,12 @@ object Settings extends Settings {
     def setDescription(newDescription: String): Project = project.settings(description := newDescription)
   }
 
-  implicit class ApplicationConfigurator(project: Project) {
-
-    def configureAsApplication: Project = project.settings(androidBuild:_*)
-  }
-
-  implicit class LibraryConfigurator(project: Project) {
-
-    def configureAsLibrary: Project = project.settings(androidBuildAar:_*)
-      .settings(typedResources := false)
-      .settings(transitiveAndroidLibs := false)
-  }
-
-  implicit class ViewsConfigurator(project: Project) {
-
-    def configureAsViews: Project = project
-      .settings(typedResources := true)
-  }
-
   implicit class ModuleConfigurator(project: Project) {
 
-    def configureModule: Project = project.settings(modulesSettings: _*)
+    def configureModule(asLibrary: Boolean = false, withViews: Boolean = false): Project = project
+      .settings(modulesSettings: _*)
+      .settings(libraryProject := asLibrary)
+      .settings(typedResources := withViews)
   }
 
   implicit class FunctionalTestConfigurator(project: Project)
