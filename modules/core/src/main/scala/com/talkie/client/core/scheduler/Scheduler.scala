@@ -1,13 +1,9 @@
 package com.talkie.client.core.scheduler
 
 import java.util.concurrent.TimeUnit.MILLISECONDS
-import java.util.concurrent.{ ScheduledFuture, Executors }
 
-import com.talkie.client.core.logging.LoggerComponent
 import com.talkie.client.core.scheduler.SchedulerMessages._
-import com.talkie.client.core.services.{ Service, SyncService }
-
-import scala.collection.mutable
+import com.talkie.client.core.services.{ Context, Service, SyncService }
 
 trait Scheduler {
 
@@ -17,70 +13,48 @@ trait Scheduler {
   def cancelJob: SyncService[CancelJobRequest, CancelJobResponse]
 }
 
-trait SchedulerComponent {
+class SchedulerImpl(context: Context) extends Scheduler {
 
-  def scheduler: Scheduler
-}
+  private val logger = context.loggerFor(this)
+  private val executor = context.schedulerExecutor
+  private val jobs = context.schedulerJobs
 
-private[scheduler] object SchedulerComponentImpl {
-
-  private val executor = Executors.newScheduledThreadPool(2)
-
-  private val jobs = mutable.Map[Job, ScheduledFuture[_]]()
-}
-
-trait SchedulerComponentImpl extends SchedulerComponent {
-  self: LoggerComponent =>
-
-  private def getExecutor = {
-    import SchedulerComponentImpl.executor
-    executor
+  override val scheduleSingleJob = Service { request: ScheduleSingleJobRequest =>
+    val future = executor.schedule(CleanJobOnceFinished(request.job), request.delay.toMillis, MILLISECONDS)
+    logger trace s"Single job scheduled: $request"
+    ScheduleJobResponse(jobs.put(request.job, future).isEmpty)
   }
 
-  private def getJobs = {
-    import SchedulerComponentImpl.jobs
-    jobs
+  override val scheduleIntervalJob = Service { request: ScheduleIntervalJobRequest =>
+    val future = executor.scheduleWithFixedDelay(request.job, request.initialDelay.toMillis, request.delay.toMillis, MILLISECONDS)
+    logger trace s"Interval job scheduled: $request"
+    ScheduleJobResponse(jobs.put(request.job, future).isEmpty)
   }
 
-  object scheduler extends Scheduler {
+  override val schedulePeriodicJob = Service { request: SchedulePeriodicJobRequest =>
+    val future = executor.scheduleAtFixedRate(request.job, request.initialDelay.toMillis, request.period.toMillis, MILLISECONDS)
+    logger trace s"Periodic job scheduled: $request"
+    ScheduleJobResponse(jobs.put(request.job, future).isEmpty)
+  }
 
-    override val scheduleSingleJob = Service { request: ScheduleSingleJobRequest =>
-      val future = getExecutor.schedule(CleanJobOnceFinished(request.job), request.delay.toMillis, MILLISECONDS)
-      logger trace s"Single job scheduled: $request"
-      ScheduleJobResponse(getJobs.put(request.job, future).isEmpty)
+  override val cancelJob = Service { request: CancelJobRequest =>
+    val result = for {
+      future <- jobs.get(request.job)
+    } yield {
+      future.cancel(request.canInterrupt)
+      jobs.remove(request.job)
+      logger trace s"Job cancelled: $request"
+      future.isCancelled
     }
+    CancelJobResponse(result getOrElse true)
+  }
 
-    override val scheduleIntervalJob = Service { request: ScheduleIntervalJobRequest =>
-      val future = getExecutor.scheduleWithFixedDelay(request.job, request.initialDelay.toMillis, request.delay.toMillis, MILLISECONDS)
-      logger trace s"Interval job scheduled: $request"
-      ScheduleJobResponse(getJobs.put(request.job, future).isEmpty)
-    }
+  case class CleanJobOnceFinished(job: Job) extends Job {
 
-    override val schedulePeriodicJob = Service { request: SchedulePeriodicJobRequest =>
-      val future = getExecutor.scheduleAtFixedRate(request.job, request.initialDelay.toMillis, request.period.toMillis, MILLISECONDS)
-      logger trace s"Periodic job scheduled: $request"
-      ScheduleJobResponse(getJobs.put(request.job, future).isEmpty)
-    }
-
-    override val cancelJob = Service { request: CancelJobRequest =>
-      val result = for {
-        future <- getJobs.get(request.job)
-      } yield {
-        future.cancel(request.canInterrupt)
-        getJobs.remove(request.job)
-        logger trace s"Job cancelled: $request"
-        future.isCancelled
-      }
-      CancelJobResponse(result getOrElse true)
-    }
-
-    case class CleanJobOnceFinished(job: Job) extends Job {
-
-      override def run(): Unit = try {
-        job.run()
-      } finally {
-        getJobs.remove(job)
-      }
+    override def run(): Unit = try {
+      job.run()
+    } finally {
+      jobs.remove(job)
     }
   }
 }

@@ -1,7 +1,5 @@
 package com.talkie.client.core.services
 
-import com.talkie.client.core.logging.LoggerComponentImpl
-
 import scala.concurrent.Future
 
 trait Service[Request, Response] {
@@ -13,7 +11,7 @@ trait SyncService[Request, Response] extends Service[Request, Response]
 
 trait AsyncService[Request, Response] extends Service[Request, Future[Response]]
 
-object Service extends LoggerComponentImpl {
+object Service {
 
   def apply[Request, Response](fun: Request => Response) = new SyncServiceImpl(monitored(withoutContext(fun)))
   def apply[Request, Response](fun: (Request, Context) => Response) = new SyncServiceImpl(monitored(fun))
@@ -26,7 +24,7 @@ object Service extends LoggerComponentImpl {
 
   private def asAsync[Request, Response](fun: (Request, Context) => Response) =
     (request: Request, context: Context) => {
-      implicit val serviceContext = context.executionContext
+      implicit val serviceContext = context.serviceExecutionContext
       Future(fun(request, context))
     }
 
@@ -35,7 +33,7 @@ object Service extends LoggerComponentImpl {
       fun(request, context)
     } catch {
       case e: Throwable =>
-        logger error ("Exception thrown within a service", e)
+        context.loggerFor(this) error ("Exception thrown within a service", e)
         throw e
     }
 

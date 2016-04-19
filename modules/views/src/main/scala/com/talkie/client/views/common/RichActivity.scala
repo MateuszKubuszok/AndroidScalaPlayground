@@ -33,7 +33,7 @@ trait RichActivity extends SActivity {
 
   protected val onRestartBodies = new ArrayBuffer[() => Any]
 
-  protected def onRestart(body: => Any) = {
+  def onRestart(body: => Any) = {
     val el = body _
     onRestartBodies += el
     el

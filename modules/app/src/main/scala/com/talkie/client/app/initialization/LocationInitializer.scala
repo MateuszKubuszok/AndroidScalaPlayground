@@ -1,20 +1,22 @@
 package com.talkie.client.app.initialization
 
-import com.talkie.client.core.logging.LoggerComponent
-import com.talkie.client.core.scheduler.SchedulerComponent
-import com.talkie.client.core.services.ContextComponent
-import com.talkie.client.domain.jobs.LocationJobsComponent
+import com.talkie.client.core.scheduler.Scheduler
+import com.talkie.client.core.services.Context
+import com.talkie.client.domain.jobs.LocationJobs
 
-private[initialization] trait LocationInitializer extends Initialization {
-  self: ContextComponent with LoggerComponent with SchedulerComponent with LocationJobsComponent =>
+class LocationInitializer(
+    context:      Context,
+    scheduler:    Scheduler,
+    locationJobs: LocationJobs
+) extends Initialization {
 
-  onInitialization {
+  def initialize() {
     implicit val c = context
 
     scheduler.schedulePeriodicJob(locationJobs.turnOnLocationTrackingJob)
     scheduler.schedulePeriodicJob(locationJobs.turnOffLocationTrackingJob)
     scheduler.schedulePeriodicJob(locationJobs.checkLastLocationJob)
 
-    logger info "Location initialized"
+    context.loggerFor(this) info "Location initialized"
   }
 }

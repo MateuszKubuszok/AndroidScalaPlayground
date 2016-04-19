@@ -6,14 +6,13 @@ import android.support.v7.app.{ ActionBarDrawerToggle, AppCompatActivity }
 import android.view.View
 import com.talkie.client.app.activities.common.Controller
 import com.talkie.client.domain.services.facebook.FacebookMessages.LogoutRequest
-import com.talkie.client.domain.services.facebook.FacebookServicesComponent
 import com.talkie.client.views.R
 import com.talkie.client.views.common.{ Listeners, RichActivity }
 import com.talkie.client.views.common.scaloid.support.design.widget.SOnNavigationItemSelectedListener
 import com.talkie.client.views.discovering.DiscoveringViews
 
 trait DiscoveringController extends Controller {
-  self: AppCompatActivity with RichActivity with FacebookServicesComponent with SOnNavigationItemSelectedListener with DiscoveringViews =>
+  self: AppCompatActivity with RichActivity with SOnNavigationItemSelectedListener with DiscoveringViews =>
 
   private implicit val c = context
 
@@ -60,7 +59,7 @@ trait DiscoveringController extends Controller {
   onOptionsItemSelected { item =>
     item.getItemId match {
       case R.id.action_settings =>
-        startSettingsActivity()
+        manualNavigation.startSettingsActivity()
         true
       case R.id.action_logout =>
         facebookServices.logout(LogoutRequest())

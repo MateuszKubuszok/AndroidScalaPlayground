@@ -1,13 +1,10 @@
 package com.talkie.client.core.permissions
 
-import android.app.Activity
 import android.content.pm.PackageManager
-import com.talkie.client.core.logging.LoggerComponent
 import com.talkie.client.core.permissions.PermissionsMessages._
 import com.talkie.client.core.permissions.RequiredPermissions.RequiredPermissions
 import com.talkie.client.core.services.{ AsyncService, Context, Service }
 
-import scala.collection.mutable
 import scala.concurrent.{ Future, Promise }
 
 trait PermissionsServices {
@@ -17,88 +14,62 @@ trait PermissionsServices {
   def requirePermissions: AsyncService[RequirePermissionsRequest, RequirePermissionsResponse]
 }
 
-trait PermissionsServicesComponent {
+class PermissionsServicesImpl extends PermissionsServices {
 
-  def permissionsServices: PermissionsServices
-}
+  override val checkPermissions = Service.async { (request: CheckPermissionsRequest, context: Context) =>
+    context.loggerFor(this) trace s"Checking permissions: ${request.permissions mkString ", "}"
 
-object PermissionsServicesComponentImpl {
+    CheckPermissionsResponse(request.permissions forall isPermissionGranted(context))
+  }
 
-  val requests = mutable.Map[Int, Promise[Unit]]()
-}
+  override val requestPermissions = Service.async { (request: RequestPermissionsRequest, context: Context) =>
+    context.loggerFor(this) trace s"Requested permissions: ${request.permissions mkString ", "}"
 
-trait PermissionsServicesComponentImpl extends Activity with PermissionsServicesComponent {
-  self: Activity with LoggerComponent =>
+    val (granted, denied) = request.permissions partition isPermissionGranted(context)
 
-  import PermissionsServicesComponentImpl._
+    val requestId = if (denied.nonEmpty) {
+      val requestId = scala.util.Random.nextInt()
+      val resultP = Promise[Unit]()
+      context.permissionsRequests.put(requestId, resultP)
+      context.activity.requestPermissions(denied map (_.toString) toArray, requestId)
+      Some(requestId)
+    } else None
 
-  override def onRequestPermissionsResult(requestCode: Int, permissions: Array[String], grantResults: Array[Int]) {
-    super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-    logger trace s"Permission results arrived for request $requestCode: ${permissions.toList mkString ","}"
-    requests get requestCode map { promise =>
-      requests remove requestCode
-      promise success { () }
-    } orElse {
-      logger assertionFailed s"Permission request $requestCode should have been set within requests map"
-      None
+    RequestPermissionsResponse(
+      (granted map { permission =>
+        (permission, PermissionStatuses.Granted)
+      }) ++ (denied map { permission =>
+        (permission, PermissionStatuses.Pending)
+      }) toMap,
+      requestId
+    )
+  }
+
+  override val requirePermissions = Service { (request: RequirePermissionsRequest, context: Context) =>
+    val logger = context.loggerFor(this)
+
+    logger trace s"Requiring permissions: ${request.permissions mkString ", "}"
+
+    implicit val c = context
+    implicit val ec = context.permissionsExecutionContext
+
+    for {
+      resultsOnRequest <- requestPermissions(RequestPermissionsRequest(request.permissions))
+
+      waitIfPending <- resultsOnRequest.requestId flatMap context.permissionsRequests.get map { promise =>
+        val future = promise.future
+        logger trace "Start waiting for granting permissions"
+        future foreach { _ => logger trace "Stopped waiting for granting permissions" }
+        future
+      } getOrElse Future.successful(true)
+
+      verifyPending <- checkPermissions(CheckPermissionsRequest(request.permissions))
+    } yield {
+      logger trace s"Required permissions: ${request.permissions mkString ", "} with result: ${verifyPending.granted}"
+      RequirePermissionsResponse(verifyPending.granted)
     }
   }
 
-  object permissionsServices extends PermissionsServices {
-
-    override val checkPermissions = Service.async { request: CheckPermissionsRequest =>
-      logger trace s"Checking permissions: ${request.permissions mkString ", "}"
-
-      CheckPermissionsResponse(request.permissions forall isPermissionGranted)
-    }
-
-    override val requestPermissions = Service.async { request: RequestPermissionsRequest =>
-      logger trace s"Requested permissions: ${request.permissions mkString ", "}"
-
-      val (granted, denied) = request.permissions partition isPermissionGranted
-
-      val requestId = if (denied.nonEmpty) {
-        val requestId = scala.util.Random.nextInt()
-        val resultP = Promise[Unit]()
-        requests.put(requestId, resultP)
-        self.requestPermissions(denied map (_.toString) toArray, requestId)
-        Some(requestId)
-      } else None
-
-      RequestPermissionsResponse(
-        (granted map { permission =>
-          (permission, PermissionStatuses.Granted)
-        }) ++ (denied map { permission =>
-          (permission, PermissionStatuses.Pending)
-        }) toMap,
-        requestId
-      )
-    }
-
-    override val requirePermissions = Service { (request: RequirePermissionsRequest, context: Context) =>
-      logger trace s"Requiring permissions: ${request.permissions mkString ", "}"
-
-      implicit val c = context
-      implicit val ec = PermissionsExecutionContext
-
-      for {
-        resultsOnRequest <- requestPermissions(RequestPermissionsRequest(request.permissions))
-
-        waitIfPending <- resultsOnRequest.requestId flatMap requests.get map { promise =>
-          val future = promise.future
-          logger trace "Start waiting for granting permissions"
-          future foreach { _ => logger trace "Stopped waiting for granting permissions" }
-          future
-        } getOrElse Future.successful(true)
-
-        verifyPending <- checkPermissions(CheckPermissionsRequest(request.permissions))
-      } yield {
-        logger trace s"Required permissions: ${request.permissions mkString ", "} with result: ${verifyPending.granted}"
-        RequirePermissionsResponse(verifyPending.granted)
-      }
-    }
-
-    private def isPermissionGranted(permission: RequiredPermissions) =
-      checkSelfPermission(permission.toString) == PackageManager.PERMISSION_GRANTED
-  }
+  private def isPermissionGranted(context: Context)(permission: RequiredPermissions) =
+    context.activity.checkSelfPermission(permission.toString) == PackageManager.PERMISSION_GRANTED
 }

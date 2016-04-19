@@ -13,23 +13,13 @@ trait Logger {
   def error(msg: String, e: Throwable): Unit
 }
 
-trait LoggerComponent {
+class LoggerImpl(TAG: String) extends Logger {
 
-  def logger: Logger
-}
-
-trait LoggerComponentImpl extends LoggerComponent {
-
-  private val TAG = this.getClass.getSimpleName
-
-  object logger extends Logger {
-
-    def assertionFailed(msg: String) = Log.wtf(TAG, msg)
-    def trace(msg: String) = Log.v(TAG, msg)
-    def info(msg: String) = Log.i(TAG, msg)
-    def debug(msg: String) = Log.d(TAG, msg)
-    def warn(msg: String) = Log.w(TAG, msg)
-    def error(msg: String) = Log.e(TAG, msg)
-    def error(msg: String, e: Throwable) = Log.e(TAG, msg, e)
-  }
+  def assertionFailed(msg: String) = Log.wtf(TAG, msg)
+  def trace(msg: String) = Log.v(TAG, msg)
+  def info(msg: String) = Log.i(TAG, msg)
+  def debug(msg: String) = Log.d(TAG, msg)
+  def warn(msg: String) = Log.w(TAG, msg)
+  def error(msg: String) = Log.e(TAG, msg)
+  def error(msg: String, e: Throwable) = Log.e(TAG, msg, e)
 }
