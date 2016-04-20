@@ -4,13 +4,13 @@ import java.util.concurrent.TimeUnit.SECONDS
 import java.util.concurrent.{ SynchronousQueue, ThreadPoolExecutor }
 
 import android.os.Looper
+import com.talkie.client.core.logging.LoggerImpl
 
 import scala.collection.mutable
 
-case class ContextExecutor(context: Context)
-    extends ThreadPoolExecutor(8, 16, 30, SECONDS, new SynchronousQueue[Runnable]()) {
+case object ServiceExecutor extends ThreadPoolExecutor(8, 16, 30, SECONDS, new SynchronousQueue[Runnable]()) {
 
-  private val logger = context.loggerFor(this)
+  private val logger = new LoggerImpl(this.getClass.getSimpleName)
 
   val initialized = mutable.WeakHashMap.empty[Thread, Boolean]
 

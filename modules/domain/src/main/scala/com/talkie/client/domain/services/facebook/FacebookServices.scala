@@ -2,6 +2,7 @@ package com.talkie.client.domain.services.facebook
 
 import com.facebook.login.{ LoginManager, LoginResult }
 import com.facebook.{ FacebookException, FacebookCallback, CallbackManager, Profile }
+import com.talkie.client.core.context.{ Context, CoreContext }
 import com.talkie.client.core.events.EventBus
 import com.talkie.client.core.events.EventMessages.NotifyEventListenersRequest
 import com.talkie.client.domain.events.FacebookEvents._
@@ -10,13 +11,13 @@ import com.talkie.client.core.services._
 
 trait FacebookServices {
 
-  def checkIfLogged: AsyncService[CheckLoggedStatusRequest, CheckLoggedStatusResponse]
-  def configureLogin: AsyncService[ConfigureLoginRequest, ConfigureLoginResponse]
-  def logout: AsyncService[LogoutRequest, LogoutResponse]
-  def processActivityResult: SyncService[ProcessActivityResultRequest, ProcessActivityResultResponse]
+  def checkIfLogged: AsyncService[CheckLoggedStatusRequest, CheckLoggedStatusResponse, Context]
+  def configureLogin: AsyncService[ConfigureLoginRequest, ConfigureLoginResponse, Context]
+  def logout: AsyncService[LogoutRequest, LogoutResponse, Context]
+  def processActivityResult: SyncService[ProcessActivityResultRequest, ProcessActivityResultResponse, Context]
 }
 
-class FacebookServicesImpl(context: Context, eventBus: EventBus) extends FacebookServices {
+class FacebookServicesImpl(context: Context with CoreContext, eventBus: EventBus) extends FacebookServices {
 
   private val logger = context.loggerFor(this)
 

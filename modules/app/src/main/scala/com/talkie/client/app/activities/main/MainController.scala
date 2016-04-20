@@ -8,19 +8,21 @@ import com.talkie.client.views.main.MainViews
 trait MainController extends Controller {
   self: RichActivity with MainViews =>
 
+  implicit val ec = context.serviceExecutionContext
+
   onCreate {
     setContentView(R.layout.activity_main)
   }
 
   onStart {
     asyncAction {
-      authNavigation.moveToMainIfLogged()
+      authNavigationF map (_.moveDependingOnLoginState())
     }
   }
 
   onRestart {
     asyncAction {
-      authNavigation.moveToMainIfLogged()
+      authNavigationF map (_.moveDependingOnLoginState())
     }
   }
 }

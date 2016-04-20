@@ -2,26 +2,29 @@ package com.talkie.client.domain.services.location
 
 import android.content.Context.LOCATION_SERVICE
 import android.location.{ Criteria, LocationManager }
+import com.talkie.client.core.context.{ CoreContext, Context }
 import com.talkie.client.core.permissions.PermissionsMessages.RequirePermissionsRequest
 import com.talkie.client.core.permissions.PermissionsServices
 import com.talkie.client.core.permissions.RequiredPermissions.AccessFineLocation
-import com.talkie.client.core.services.{ Context, Service, AsyncService }
+import com.talkie.client.core.services.{ Service, AsyncService }
 import com.talkie.client.domain.services.location.LocationMessages._
 
 import scala.concurrent.duration._
 
 trait LocationServices {
 
-  def getLastKnownLocation: AsyncService[LastKnownLocationRequest, LastKnownLocationResponse]
-  def registerLocationListener: AsyncService[RegisterLocationListenerRequest, RegisterLocationListenerResponse]
-  def removeLocationListener: AsyncService[RemoveLocationListenerRequest, RemoveLocationListenerResponse]
+  type LocationContext = Context with CoreContext
+
+  def getLastKnownLocation: AsyncService[LastKnownLocationRequest, LastKnownLocationResponse, LocationContext]
+  def registerLocationListener: AsyncService[RegisterLocationListenerRequest, RegisterLocationListenerResponse, LocationContext]
+  def removeLocationListener: AsyncService[RemoveLocationListenerRequest, RemoveLocationListenerResponse, Context]
 }
 
 class LocationServicesImpl(context: Context, permissionsServices: PermissionsServices) extends LocationServices {
 
   private lazy val logger = context.loggerFor(this)
 
-  private lazy val locationManager = context.activity.getSystemService(LOCATION_SERVICE).asInstanceOf[LocationManager]
+  private lazy val locationManager = context.androidContext.getSystemService(LOCATION_SERVICE).asInstanceOf[LocationManager]
 
   private val minTimeMs = (10 seconds).toMillis
   private val minDistanceM = 1500
@@ -39,15 +42,16 @@ class LocationServicesImpl(context: Context, permissionsServices: PermissionsSer
     criteria
   }
 
-  override val getLastKnownLocation = Service { (request: LastKnownLocationRequest, context: Context) =>
+  override val getLastKnownLocation = Service { (request: LastKnownLocationRequest, context: LocationContext) =>
     logger trace s"Requested last known location using: ${request.provider}"
 
     implicit val c = context
     implicit val ec = context.serviceExecutionContext
 
     for {
-      response <- permissionsServices.requirePermissions(RequirePermissionsRequest(Set(AccessFineLocation)))
-      if response.granted
+      response <- permissionsServices.requirePermissions(
+        RequirePermissionsRequest(request.requestor, Set(AccessFineLocation))
+      ) if response.granted
     } yield {
       val locationOpt = {
         Option(locationManager.getBestProvider(enabledProviderCriteria, true))
@@ -63,15 +67,16 @@ class LocationServicesImpl(context: Context, permissionsServices: PermissionsSer
     }
   }
 
-  override val registerLocationListener = Service { (request: RegisterLocationListenerRequest, context: Context) =>
+  override val registerLocationListener = Service { (request: RegisterLocationListenerRequest, context: LocationContext) =>
     logger trace s"Requested LocationListener registration for: ${request.providers mkString ", "}"
 
     implicit val c = context
     implicit val ec = context.serviceExecutionContext
 
     for {
-      response <- permissionsServices.requirePermissions(RequirePermissionsRequest(Set(AccessFineLocation)))
-      if response.granted
+      response <- permissionsServices.requirePermissions(
+        RequirePermissionsRequest(request.requestor, Set(AccessFineLocation))
+      ) if response.granted
     } yield {
       val success = request.providers.nonEmpty && (request.providers map { provider =>
         logger trace s"Registering LocationListener on: $provider"

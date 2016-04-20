@@ -62,7 +62,9 @@ trait DiscoveringController extends Controller {
         manualNavigation.startSettingsActivity()
         true
       case R.id.action_logout =>
-        facebookServices.logout(LogoutRequest())
+        sharedServices { services =>
+          services.facebookServices.logout(LogoutRequest())
+        }
         true
       case _ => false
     }

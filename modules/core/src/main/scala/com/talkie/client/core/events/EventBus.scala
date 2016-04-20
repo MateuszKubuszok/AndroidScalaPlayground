@@ -1,7 +1,8 @@
 package com.talkie.client.core.events
 
+import com.talkie.client.core.context.{ CoreContext, Context }
 import com.talkie.client.core.events.EventMessages._
-import com.talkie.client.core.services.{ AsyncService, Context, Service, SyncService }
+import com.talkie.client.core.services.{ AsyncService, Service, SyncService }
 
 import scala.collection.mutable
 import scala.reflect.ClassTag
@@ -9,27 +10,32 @@ import scala.util.Try
 
 trait EventBus {
 
-  def getListeners: SyncService[GetListenersRequest[_ <: Event], GetListenersResponse]
-  def notifyEventListeners: AsyncService[NotifyEventListenersRequest[_ <: Event], NotifyEventListenersResponse]
-  def registerEventListener: SyncService[RegisterEventListenerRequest[_ <: Event], RegisterEventListenerResponse]
-  def removeEventListener: SyncService[RemoveEventListenerRequest[_ <: Event], RemoveEventListenerResponse]
+  type EventContext = Context with CoreContext
+
+  def getListeners: SyncService[GetListenersRequest[_ <: Event], GetListenersResponse, EventContext]
+  def notifyEventListeners: AsyncService[NotifyEventListenersRequest[_ <: Event], NotifyEventListenersResponse, EventContext]
+  def registerEventListener: SyncService[RegisterEventListenerRequest[_ <: Event], RegisterEventListenerResponse, EventContext]
+  def removeEventListener: SyncService[RemoveEventListenerRequest[_ <: Event], RemoveEventListenerResponse, EventContext]
 }
 
-class EventBusImpl extends EventBus {
+class EventBusImpl(context: Context) extends EventBus {
 
-  protected def listenersOf[E <: Event](eventType: ClassTag[E], context: Context) =
+  private val logger = context.loggerFor(this)
+
+  protected def listenersOf[E <: Event](eventType: ClassTag[E], context: EventContext) =
     context.eventListeners.getOrElseUpdate(eventType, mutable.Set()).asInstanceOf[mutable.Set[EventListener[E]]]
 
-  override val getListeners = Service { (request: GetListenersRequest[_ <: Event], context: Context) =>
+  override val getListeners = Service { (request: GetListenersRequest[_ <: Event], context: Context with CoreContext) =>
     GetListenersResponse(listenersOf(request.eventType, context).toSet)
   }
 
   override val notifyEventListeners = Service.async {
-    (request: NotifyEventListenersRequest[_ <: Event], context: Context) =>
-      context.loggerFor(this) trace s"Notify listeners about event: ${request.event}"
+    (request: NotifyEventListenersRequest[_ <: Event], context: EventContext) =>
+      logger trace s"Notify listeners about event: ${request.event}"
 
       def notifyFor[E <: Event](typedRequest: NotifyEventListenersRequest[E]) = for {
         listener <- listenersOf(typedRequest.eventType, context)
+        _ = logger trace s"Notifying $listener about ${request.event}"
       } yield Try(listener.handleEvent(typedRequest.event)).isSuccess
 
       val results = notifyFor(request)
@@ -38,7 +44,8 @@ class EventBusImpl extends EventBus {
   }
 
   override val registerEventListener = Service {
-    (request: RegisterEventListenerRequest[_ <: Event], context: Context) =>
+    (request: RegisterEventListenerRequest[_ <: Event], context: EventContext) =>
+      logger trace s"Register listeners: ${request.listener}"
 
       def addListener[E <: Event](request: RegisterEventListenerRequest[E]) =
         listenersOf(request.eventType, context).add(request.listener)
@@ -46,7 +53,8 @@ class EventBusImpl extends EventBus {
       RegisterEventListenerResponse(addListener(request))
   }
 
-  override val removeEventListener = Service { (request: RemoveEventListenerRequest[_ <: Event], context: Context) =>
+  override val removeEventListener = Service { (request: RemoveEventListenerRequest[_ <: Event], context: EventContext) =>
+    logger trace s"Remove listeners: ${request.listener}"
 
     def removeListener[E <: Event](request: RemoveEventListenerRequest[E]) =
       listenersOf(request.eventType, context).remove(request.listener)

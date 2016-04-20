@@ -19,15 +19,21 @@ trait LoginController extends Controller {
 
   onPostCreate {
     asyncAction {
-      facebookServices.configureLogin(ConfigureLoginRequest(loginButton))
+      sharedServices { services =>
+        services.facebookServices.configureLogin(ConfigureLoginRequest(loginButton))
+      }
     }
   }
 
   onActivityResult { (requestCode, resultCode, data) =>
     asyncAction {
-      val result = facebookServices.processActivityResult(ProcessActivityResultRequest(requestCode, resultCode, data))
-      if (result.handled) context.loggerFor(this) trace "ActivityResult handled successfully"
-      else context.loggerFor(this) error "ActivityResult not handled"
+      sharedServices { services =>
+        val result = services.facebookServices.processActivityResult(
+          ProcessActivityResultRequest(requestCode, resultCode, data)
+        )
+        if (result.handled) context.loggerFor(this) trace "ActivityResult handled successfully"
+        else context.loggerFor(this) error "ActivityResult not handled"
+      }
     }
   }
 }

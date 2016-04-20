@@ -10,6 +10,7 @@ import org.scaloid.common._
 trait ManualNavigation {
 
   def loginActivity(): Intent
+  def startLoginActivity(): Unit
 
   def discoveringActivity(): Intent
   def startDiscoveringActivity(): Unit
@@ -18,15 +19,16 @@ trait ManualNavigation {
   def startSettingsActivity(): Unit
 }
 
-class ManualNavigationImpl(activity: RichActivity) extends ManualNavigation {
+class ManualNavigationImpl(owner: RichActivity) extends ManualNavigation {
 
-  private implicit val ac: android.content.Context = activity.ctx
+  private implicit val ac: android.content.Context = owner.ctx
 
   def loginActivity() = SIntent[LoginActivity]
+  def startLoginActivity() = owner.startActivity[LoginActivity]
 
   def discoveringActivity() = SIntent[DiscoveringActivity]
-  def startDiscoveringActivity() = activity.startActivity[DiscoveringActivity]
+  def startDiscoveringActivity() = owner.startActivity[DiscoveringActivity]
 
   def settingsActivity() = SIntent[SettingsActivity]
-  def startSettingsActivity() = activity.startActivity[SettingsActivity]
+  def startSettingsActivity() = owner.startActivity[SettingsActivity]
 }

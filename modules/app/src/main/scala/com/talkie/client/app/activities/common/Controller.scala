@@ -1,37 +1,15 @@
 package com.talkie.client.app.activities.common
 
-import com.talkie.client.app.navigation._
-import com.talkie.client.core.events.{ EventBus, EventBusImpl }
-import com.talkie.client.core.permissions.{ PermissionsServices, PermissionsServicesImpl }
-import com.talkie.client.core.scheduler.{ Scheduler, SchedulerImpl }
-import com.talkie.client.core.services.Context
-import com.talkie.client.domain.jobs.{ LocationJobs, LocationJobsImpl }
-import com.talkie.client.domain.services.facebook.{ FacebookServices, FacebookServicesImpl }
-import com.talkie.client.domain.services.location.{ LocationServicesImpl, LocationServices }
+import com.talkie.client.app.services._
+import com.talkie.client.core.events.EventMessages.RegisterEventListenerRequest
 import com.talkie.client.views.TypedFindView
 import com.talkie.client.views.common.RichActivity
 import com.talkie.client.views.common.views.TypedFindLayout
+import org.scaloid.common.LocalServiceConnection
 
 import scala.concurrent.Future
 
-trait Controller extends TypedFindView with TypedFindLayout {
-
-  protected val context: Context
-
-  // core
-  protected val eventBus: EventBus
-  protected val permissionsServices: PermissionsServices
-  protected val scheduler: Scheduler
-
-  // domain
-  protected val facebookServices: FacebookServices
-  protected val locationServices: LocationServices
-  protected val locationJobs: LocationJobs
-
-  // app
-  protected val accessTokenObserver: AccessTokenObserver
-  protected val manualNavigation: ManualNavigation
-  protected val authNavigation: AuthNavigation
+trait Controller extends TypedFindView with TypedFindLayout with SharedServicesUser with OwnedServices {
 
   private implicit val ec = context.serviceExecutionContext
 
@@ -40,23 +18,30 @@ trait Controller extends TypedFindView with TypedFindLayout {
   def asyncAction[T](action: Future[T]): Unit = {}
 }
 
-trait ControllerImpl extends Controller {
+trait ControllerImpl extends Controller with OwnedServicesImpl {
   self: RichActivity =>
 
-  lazy val context = Context.from(self)
+  private val logger = context.loggerFor(this)
 
-  // core
-  lazy val eventBus = new EventBusImpl
-  lazy val permissionsServices = new PermissionsServicesImpl
-  lazy val scheduler = new SchedulerImpl(context)
+  override val sharedServices = new LocalServiceConnection[SharedServicesImpl]
 
-  // domain
-  lazy val facebookServices = new FacebookServicesImpl(context, eventBus)
-  lazy val locationServices = new LocationServicesImpl(context, permissionsServices)
-  lazy val locationJobs = new LocationJobsImpl(context, eventBus, locationServices)
+  sharedServices { services =>
+    implicit val c = context
+    implicit val ec = context.serviceExecutionContext
 
-  // app
-  lazy val accessTokenObserver = new AccessTokenObserver(self, context, eventBus)
-  lazy val manualNavigation = new ManualNavigationImpl(self)
-  lazy val authNavigation = new AuthNavigationImpl(self, context, manualNavigation, facebookServices, accessTokenObserver)
+    services.accessTokenObserver.configureBindings(this)
+
+    /*
+        services.scheduler.schedulePeriodicJob(services.locationJobs.turnOnLocationTrackingJob(this))
+        services.scheduler.schedulePeriodicJob(services.locationJobs.turnOffLocationTrackingJob(this))
+        services.scheduler.schedulePeriodicJob(services.locationJobs.checkLastLocationJob(this))
+        logger trace "Location initialized"
+    */
+
+    authNavigationF map { authNavigation =>
+      services.eventBus.registerEventListener(RegisterEventListenerRequest(authNavigation.onUserLoggedIn))
+      services.eventBus.registerEventListener(RegisterEventListenerRequest(authNavigation.onUserLoggedOut))
+      logger trace "Log in/out event listeners registered"
+    }
+  }
 }

@@ -2,18 +2,19 @@ package com.talkie.client.core.scheduler
 
 import java.util.concurrent.TimeUnit.MILLISECONDS
 
+import com.talkie.client.core.context.{ Context, CoreContext }
 import com.talkie.client.core.scheduler.SchedulerMessages._
-import com.talkie.client.core.services.{ Context, Service, SyncService }
+import com.talkie.client.core.services.{ Service, SyncService }
 
 trait Scheduler {
 
-  def scheduleSingleJob: SyncService[ScheduleSingleJobRequest, ScheduleJobResponse]
-  def scheduleIntervalJob: SyncService[ScheduleIntervalJobRequest, ScheduleJobResponse]
-  def schedulePeriodicJob: SyncService[SchedulePeriodicJobRequest, ScheduleJobResponse]
-  def cancelJob: SyncService[CancelJobRequest, CancelJobResponse]
+  def scheduleSingleJob: SyncService[ScheduleSingleJobRequest, ScheduleJobResponse, Context]
+  def scheduleIntervalJob: SyncService[ScheduleIntervalJobRequest, ScheduleJobResponse, Context]
+  def schedulePeriodicJob: SyncService[SchedulePeriodicJobRequest, ScheduleJobResponse, Context]
+  def cancelJob: SyncService[CancelJobRequest, CancelJobResponse, Context]
 }
 
-class SchedulerImpl(context: Context) extends Scheduler {
+class SchedulerImpl(context: Context with CoreContext) extends Scheduler {
 
   private val logger = context.loggerFor(this)
   private val executor = context.schedulerExecutor

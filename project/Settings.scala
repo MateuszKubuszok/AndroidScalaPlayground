@@ -74,6 +74,9 @@ trait Settings {
       // classes that should stay
       "-keep class com.facebook.**",
       "-keep class com.talkie.client.**",
+      "-keepattributes *Annotation*",
+      "-keep public class * extends android.support.design.widget.CoordinatorLayout.Behavior { *; }",
+      "-keep public class * extends android.support.design.widget.ViewOffsetBehavior { *; }",
       // removed unused
       "-dontwarn com.google.common.**",
       "-dontwarn org.slf4j.**",
