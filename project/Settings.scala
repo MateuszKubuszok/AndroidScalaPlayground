@@ -32,6 +32,7 @@ trait Settings {
 
     // resolvers
     resolvers ++= commonResolvers,
+    offline := true,
 
     // Java
     javacOptions in Compile ++= Seq(

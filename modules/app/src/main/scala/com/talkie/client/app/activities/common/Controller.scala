@@ -31,12 +31,10 @@ trait ControllerImpl extends Controller with OwnedServicesImpl {
 
     services.accessTokenObserver.configureBindings(this)
 
-    /*
-        services.scheduler.schedulePeriodicJob(services.locationJobs.turnOnLocationTrackingJob(this))
-        services.scheduler.schedulePeriodicJob(services.locationJobs.turnOffLocationTrackingJob(this))
-        services.scheduler.schedulePeriodicJob(services.locationJobs.checkLastLocationJob(this))
-        logger trace "Location initialized"
-    */
+    services.scheduler.schedulePeriodicJob(services.locationJobs.turnOnLocationTrackingJob(this))
+    services.scheduler.schedulePeriodicJob(services.locationJobs.turnOffLocationTrackingJob(this))
+    services.scheduler.schedulePeriodicJob(services.locationJobs.checkLastLocationJob(this))
+    logger trace "Location initialized"
 
     authNavigationF map { authNavigation =>
       services.eventBus.registerEventListener(RegisterEventListenerRequest(authNavigation.onUserLoggedIn))

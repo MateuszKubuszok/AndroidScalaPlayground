@@ -24,11 +24,11 @@ object ContextImpl {
     ServiceExecutor,
     (e: Throwable) => logger error ("Unhandled Future exception", e)
   )
+
+  logger trace "Global Context created"
 }
 
 class ContextImpl(override val owner: android.content.ContextWrapper) extends Context {
-
-  private val logger = loggerFor(this)
 
   override val androidContext = owner.getBaseContext
 

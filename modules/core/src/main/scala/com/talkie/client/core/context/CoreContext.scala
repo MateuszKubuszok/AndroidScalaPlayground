@@ -35,6 +35,8 @@ object CoreContextImpl {
 
   val schedulerExecutor = Executors.newScheduledThreadPool(2)
   val schedulerJobs = mutable.Map[Job, ScheduledFuture[_]]()
+
+  logger trace "Global CoreContext created"
 }
 
 trait CoreContextImpl extends CoreContext { self: Context =>

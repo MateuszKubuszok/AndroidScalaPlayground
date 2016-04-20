@@ -30,9 +30,6 @@ trait SharedServices {
   def facebookServices: FacebookServices
   def locationServices: LocationServices
   def locationJobs: LocationJobs
-
-  // app
-  def accessTokenObserver: AccessTokenObserver
 }
 
 class SharedServicesImpl extends LocalService with SharedServices {
@@ -52,16 +49,13 @@ class SharedServicesImpl extends LocalService with SharedServices {
   override lazy val locationJobs = new LocationJobsImpl(context, eventBus, locationServices)
 
   // app
-  override lazy val accessTokenObserver = new AccessTokenObserver(context, eventBus)
+  lazy val accessTokenObserver = new AccessTokenObserver(context, eventBus)
 
   onCreate {
     accessTokenObserver.configureBindings(this)
 
-    JodaTimeAndroid.init(context.androidContext)
+    JodaTimeAndroid.init(context.androidContext) // move it into place of usage
     logger trace "JodaTime initialized"
-
-    FacebookSdk.sdkInitialize(context.androidContext.getApplicationContext)
-    logger trace "Facebook SDK initialized"
 
     logger info "SharedServices created"
   }
