@@ -29,7 +29,6 @@ class AuthNavigationImpl(
   object onUserLoggedIn extends EventListener[LoginSucceeded] {
 
     override def handleEvent(event: LoginSucceeded) = {
-      logger info "User logged in"
       manualNavigation.startDiscoveringActivity()
       true
     }
@@ -38,7 +37,6 @@ class AuthNavigationImpl(
   object onUserLoggedOut extends EventListener[LoggedOut] {
 
     override def handleEvent(event: LoggedOut) = {
-      logger info "User logged out"
       manualNavigation.startLoginActivity()
       true
     }
