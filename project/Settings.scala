@@ -89,7 +89,7 @@ trait Settings {
     // Libraries
     libraryDependencies ++= (androidDeps ++ mainDeps),
     libraryDependencies ++= testDeps map (_ % "test"),
-    transitiveAndroidLibs := false,
+    publishMavenStyle := false,
 
     // tests
     testOptions in Test += excludeTags(disabledTestTag),
