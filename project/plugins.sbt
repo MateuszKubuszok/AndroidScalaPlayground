@@ -1,6 +1,6 @@
 //scalaVersion := "2.11.7" // Plugins are not yet ready for Scala 2.11
 
-addSbtPlugin("org.scala-android" % "sbt-android" % "1.6.0")
+addSbtPlugin("org.scala-android" % "sbt-android" % "1.6.3")
 
 addSbtPlugin("org.scalariform" % "sbt-scalariform" % "1.5.1")
 

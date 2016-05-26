@@ -92,6 +92,8 @@ trait Settings {
     publishMavenStyle := false,
 
     // tests
+    fork in Test := true,
+    parallelExecution in Test := false,
     testOptions in Test += excludeTags(disabledTestTag),
 
     // Scala warnings

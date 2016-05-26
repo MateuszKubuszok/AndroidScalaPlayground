@@ -28,7 +28,8 @@ trait Dependencies {
   // scala
   val scalaLib = "org.scala-lang" % "scala-library" % scalaVersionUsed
   val scaloid = "org.scaloid" %% "scaloid" % "4.1"
-  val scalaz = "org.scalaz" %% "scalaz-core" % "7.2.1"
+  val scalazCore = "org.scalaz" %% "scalaz-core" % "7.2.3"
+  val scalazConcurrent = "org.scalaz" %% "scalaz-concurrent" % "7.2.3"
 
   // sql
   val sqlDroid = "org.sqldroid" % "sqldroid" % "1.0.3"
@@ -47,17 +48,17 @@ trait Dependencies {
 
   // testing
   val mockito    = "org.mockito" % "mockito-core" % "1.10.8"
-  val spec2      = "org.specs2" %% "specs2" % "2.4.1"
-  val spec2Core  = "org.specs2" %% "specs2-core" % "2.4.1"
-  val spec2JUnit = "org.specs2" %% "specs2-junit" % "2.4.1"
+  val scalatest  = "org.scalatest" %% "scalatest" % "2.2.5"
+  val robotest   = "com.geteit" %% "robotest" % "0.12"
 
   val androidDeps = Seq(annotations, appcompat, design, support, recyclerview, multidex)
 
-  val mainDeps = Seq(scalaLib, scaloid, scalaz, sqlDroid, slick, shapeless, joda, jodaConvert, facebookSdk) map {
+  val mainDeps = Seq(scalaLib, scaloid, scalazCore, scalazConcurrent, sqlDroid, slick, shapeless, joda, jodaConvert,
+      facebookSdk) map {
     _ excludeAll ExclusionRule(organization = sdkPrefix)
   }
 
-  val testDeps = Seq(mockito, spec2, spec2Core, spec2JUnit)
+  val testDeps = Seq(mockito, scalatest, robotest)
 }
 
 object Dependencies extends Dependencies {
