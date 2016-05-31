@@ -47,13 +47,13 @@ final class LocationServiceInterpreterImpl(
 
     case CheckLastKnownLocation(provider) => requirePermissions(requiredPermission)
       .interpret
-      .ensuringPermissions() {
+      .ensuringPermissions(requiredPermission) {
         lastKnownLocation(provider).asInstanceOf[R]
       }
 
     case RegisterLocationListener(listener, providers @ _*) => requirePermissions(requiredPermission)
       .interpret
-      .ensuringPermissions() {
+      .ensuringPermissions(requiredPermission) {
         registerLocationListener(listener, providers: _*).asInstanceOf[R]
       }
 

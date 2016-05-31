@@ -35,11 +35,20 @@ object ServiceInterpreter {
 
     val mockBoolean = new AtomicBoolean(false)
 
-    def fireAndForget(): Unit = task.unsafePerformAsyncInterruptibly({
-      case -\/(error)  => new LoggerImpl(this.getClass.getSimpleName) error (s"Task execution failed", error)
-      case \/-(result) => // ok
-    }, mockBoolean)
+    def fireAndForget(): Unit = task.unsafePerformAsyncInterruptibly(logOnError, mockBoolean)
 
-    def fireAndWait(): \/[Throwable, R] = task.unsafePerformSyncAttempt
+    def fireAndWait(): \/[Throwable, R] = {
+      val result = task.unsafePerformSyncAttempt
+      result.leftMap(logOnError)
+      result
+    }
+
+    private def logOnError(error: Throwable): Unit =
+      new LoggerImpl(this.getClass.getSimpleName) error (s"Task execution failed", error)
+
+    private def logOnError(result: \/[Throwable, R]): Unit = result match {
+      case -\/(error)  => logOnError(error)
+      case \/-(result) => // ok
+    }
   }
 }

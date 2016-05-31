@@ -73,22 +73,31 @@ final class NavigationServiceInterpreterImpl(
       (for {
         _ <- registerEventListener(OnUserLoggedIn)
         _ <- registerEventListener(OnUserLoggedOut)
-      } yield ()).fireAndForget()
+      } yield ()).fireAndWait()
     }
 
     activity.teardown {
       (for {
         _ <- removeEventListener(OnUserLoggedIn)
         _ <- removeEventListener(OnUserLoggedOut)
-      } yield ()).fireAndForget()
+      } yield ()).fireAndWait()
     }
   }
 
-  private def moveToDiscovering(): Unit = startActivity[DiscoveringActivity]
+  private def moveToDiscovering(): Unit = {
+    logger info "Moving to DiscoveringActivity"
+    startActivity[DiscoveringActivity]
+  }
 
-  private def moveToSettings(): Unit = startActivity[SettingsActivity]
+  private def moveToSettings(): Unit = {
+    logger info "Moving to SettingsActivity"
+    startActivity[SettingsActivity]
+  }
 
-  private def moveToLogin(): Unit = startActivity[LoginActivity]
+  private def moveToLogin(): Unit = {
+    logger info "Moving to LoginActivity"
+    startActivity[LoginActivity]
+  }
 
   private def moveToLoginOrElse[R](moveTo: MoveTo[R]): Task[Unit] = {
     import com.talkie.client.core.facebook.FacebookServiceInterpreter._

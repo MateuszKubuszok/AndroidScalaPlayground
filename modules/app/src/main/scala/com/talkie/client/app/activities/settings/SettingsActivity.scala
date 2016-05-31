@@ -11,7 +11,7 @@ import android.os.{ Build, Bundle }
 import android.preference._
 import android.text.TextUtils
 import android.view.MenuItem
-import com.talkie.client.core.components.Activity
+import com.talkie.client.app.activities.common.BaseActivity
 import com.talkie.client.views.R
 import com.talkie.client.views.common.Listeners
 import com.talkie.client.views.settings.AppCompatPreferenceActivity
@@ -116,7 +116,7 @@ object SettingsActivity {
 
 }
 
-class SettingsActivity extends AppCompatPreferenceActivity with Activity {
+class SettingsActivity extends AppCompatPreferenceActivity with BaseActivity {
 
   override protected def onCreate(savedInstanceState: Bundle) {
     super.onCreate(savedInstanceState)

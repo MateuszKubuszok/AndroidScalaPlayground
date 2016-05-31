@@ -48,39 +48,43 @@ final class PermissionServiceInterpreterImpl(context: Context, requestor: Activi
   private def requestPermissions(permissions: Seq[RequiredPermission]): (PermissionStatusMap, Int) = {
     val (granted, denied) = permissions partition isPermissionGranted
 
-    val requestId = context.withSharedStateUpdated { state =>
-      val requestId = scala.util.Random.nextInt()
-      val resultP = Promise[Unit]()
-      val newRequests = state.permissionRequests + (requestId -> resultP)
-      val newState = state.copy(permissionRequests = newRequests)
-
-      requestor.requestPermissions(denied map (_.toString) toArray, requestId) // TODO: handle that in activities
-
-      newState -> requestId
-    }
-
     val statuses: PermissionStatusMap = (granted map { permission =>
       permission -> PermissionStatuses.Granted
     }) ++ (denied map { permission =>
       permission -> PermissionStatuses.Pending
     }) toMap
 
-    statuses -> requestId
+    if (denied.nonEmpty) {
+      statuses -> context.withSharedStateUpdated { state =>
+        val requestId = scala.util.Random.nextInt(Int.MaxValue)
+        val resultP = Promise[Unit]()
+        val newRequests = state.permissionRequests + (requestId -> resultP)
+        val newState = state.copy(permissionRequests = newRequests)
+
+        requestor.requestPermissions(denied map (_.toString) toArray, requestId) // TODO: handle that in activities
+
+        newState -> requestId
+      }
+    } else {
+      statuses -> -1 // TODO: replace with Option
+    }
   }
 
   private def requirePermissions(permissions: Seq[RequiredPermission]): PermissionStatusMap = {
-    val (_, requestId) = requestPermissions(permissions)
+    if (permissions.nonEmpty) {
+      val (_, requestId) = requestPermissions(permissions)
 
-    val requestP = context.withSharedState { _.permissionRequests.get(requestId) }
+      val requestP = context.withSharedState { _.permissionRequests.get(requestId) }
 
-    requestP foreach { request =>
-      logger trace "Start waiting for granting permissions"
+      requestP foreach { request =>
+        logger trace "Start waiting for granting permissions"
 
-      Await.result(request.future, Duration.Inf)
+        Await.result(request.future, Duration.Inf)
 
-      context.withSharedStateUpdated { state =>
-        val newRequests = state.permissionRequests - requestId
-        state.copy(permissionRequests = newRequests) -> ((): Unit)
+        context.withSharedStateUpdated { state =>
+          val newRequests = state.permissionRequests - requestId
+          state.copy(permissionRequests = newRequests) -> ((): Unit)
+        }
       }
     }
 

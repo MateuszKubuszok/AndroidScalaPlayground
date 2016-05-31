@@ -23,10 +23,12 @@ trait PartialServiceInterpreterCompanion[From[_] <: Service[_], To[_]] {
 
   implicit class PartialServiceRunner[R](partialServiceFree: Free[From, R]) {
 
+    import ServiceInterpreter.TaskRunner
+
     def fireAndForget()(implicit psi: PSI, M: Monad[To]): Unit =
-      partialServiceFree.interpret.asInstanceOf[Task[R]].unsafePerformAsyncInterruptibly(_ => ())
+      partialServiceFree.interpret.asInstanceOf[Task[R]].fireAndForget()
 
     def fireAndWait()(implicit psi: PSI, M: Monad[To]): \/[Throwable, R] =
-      partialServiceFree.interpret.asInstanceOf[Task[R]].unsafePerformSyncAttempt
+      partialServiceFree.interpret.asInstanceOf[Task[R]].fireAndWait()
   }
 }

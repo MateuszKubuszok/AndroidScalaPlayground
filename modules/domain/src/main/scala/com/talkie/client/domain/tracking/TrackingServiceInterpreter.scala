@@ -51,7 +51,7 @@ final class TrackingServiceInterpreterImpl(
         _ <- turnOnLocationTracking()
         _ <- turnOffLocationTracking()
         _ <- checkLastLocation()
-      } yield ()).fireAndForget()
+      } yield ()).fireAndWait()
     }
 
     requestor.teardown {
@@ -59,7 +59,7 @@ final class TrackingServiceInterpreterImpl(
         _ <- cancelJob(TurnOnLocationTrackingJob, canInterrupt = true)
         _ <- cancelJob(TurnOffLocationTrackingJob, canInterrupt = false)
         _ <- cancelJob(CheckLastKnownLocationJob, canInterrupt = true)
-      } yield ()).fireAndForget()
+      } yield ()).fireAndWait()
     }
   }
 

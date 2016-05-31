@@ -14,6 +14,8 @@ import com.talkie.client.views.TypedFindView
 import com.talkie.client.views.common.views.TypedFindLayout
 import net.danlew.android.joda.JodaTimeAndroid
 
+import scalaz.-\/
+
 trait Controller extends TypedFindView with TypedFindLayout {
 
   protected val context: Context
@@ -21,7 +23,7 @@ trait Controller extends TypedFindView with TypedFindLayout {
 
   protected val logger: Logger
 
-  protected def loginButtonOpt: Option[LoginButton] = None
+  protected def loginButtonOpt(): Option[LoginButton] = None
 }
 
 trait ControllerImpl extends Controller { self: Activity =>
@@ -31,14 +33,14 @@ trait ControllerImpl extends Controller { self: Activity =>
 
   override protected val logger = context.loggerFor(this)
 
-  onPostCreate {
-    (for {
-      _ <- configureLogin(loginButtonOpt).generalize
+  onCreate {
+    val result = (for {
       _ <- configureTracking.generalize
       _ <- configureNavigation.generalize
+      _ <- configureLogin(loginButtonOpt).generalize
     } yield {
       JodaTimeAndroid.init(context.androidContext)
       logger debug s"Controller ${self} initialized"
-    }).fireAndForget()
+    }).fireAndWait()
   }
 }

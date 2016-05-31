@@ -67,7 +67,7 @@ final class FacebookServiceInterpreterImpl(
   private object LoginResultCallback extends FacebookCallback[LoginResult] {
 
     override def onSuccess(result: LoginResult) = {
-      logger info s"Logged in: $result"
+      logger info s"Logged in"
       notifyEventListeners(LoginSucceeded(result)).fireAndForget()
     }
 
@@ -88,16 +88,17 @@ final class FacebookServiceInterpreterImpl(
     Option(Profile.getCurrentProfile).isDefined
   }
 
-  private def configureLogin(loginButtonOpt: Option[LoginButton]): Unit = {
+  private def configureLogin(loginButtonOpt: () => Option[LoginButton]): Unit = {
     ensureInitialized()
     logger trace "Requested activity and loginButton configuration"
     val tracker = new TokenUpdateTracker
 
     activity.bootstrap {
       tracker.startTracking()
-      loginButtonOpt.foreach { loginButton =>
+      loginButtonOpt().foreach { loginButton =>
         loginButton.setReadPermissions(permissions: _*)
         loginButton.registerCallback(callBackManager, LoginResultCallback)
+        logger debug "Configured login button"
       }
       logger trace "Started tracing AccessTokens"
     }
@@ -114,7 +115,7 @@ final class FacebookServiceInterpreterImpl(
 
   private def logout(): Unit = {
     ensureInitialized()
-    logger trace "Requested logout"
+    logger debug "Requested logout"
     loginManager.logOut()
     notifyEventListeners(LoggedOut()).fireAndForget()
   }
