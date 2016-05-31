@@ -1,7 +1,6 @@
 package com.talkie.client.core.facebook
 
 import com.facebook.login.widget.LoginButton
-import com.talkie.client.core.components.Activity
 import com.talkie.client.core.services.Service
 
 import scalaz.Free

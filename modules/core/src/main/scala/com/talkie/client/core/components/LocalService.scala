@@ -1,7 +1,7 @@
 package com.talkie.client.core.components
 
 import android.content.Intent
-import android.os.{IBinder, Binder}
+import android.os.{ IBinder, Binder }
 
 trait LocalService extends Service {
 

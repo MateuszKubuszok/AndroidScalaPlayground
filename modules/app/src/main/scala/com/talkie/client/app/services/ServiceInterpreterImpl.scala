@@ -1,15 +1,15 @@
 package com.talkie.client.app.services
 
-import com.talkie.client.app.navigation.{NavigationServiceInterpreterImpl, NavigationServiceInterpreter}
+import com.talkie.client.app.navigation.{ NavigationServiceInterpreterImpl, NavigationServiceInterpreter }
 import com.talkie.client.core.components.Activity
 import com.talkie.client.core.context.Context
-import com.talkie.client.core.events.{EventServiceInterpreter, EventServiceInterpreterImpl}
-import com.talkie.client.core.facebook.{FacebookServiceInterpreter, FacebookServiceInterpreterImpl}
-import com.talkie.client.core.location.{LocationServiceInterpreterImpl, LocationServiceInterpreter}
-import com.talkie.client.core.permissions.{PermissionServiceInterpreterImpl, PermissionServiceInterpreter}
-import com.talkie.client.core.scheduler.{SchedulerServiceInterpreter, SchedulerServiceInterpreterImpl}
-import com.talkie.client.core.services.{Service, ServiceInterpreter}
-import com.talkie.client.domain.tracking.{TrackingServiceInterpreterImpl, TrackingServiceInterpreter}
+import com.talkie.client.core.events.{ EventServiceInterpreter, EventServiceInterpreterImpl }
+import com.talkie.client.core.facebook.{ FacebookServiceInterpreter, FacebookServiceInterpreterImpl }
+import com.talkie.client.core.location.{ LocationServiceInterpreterImpl, LocationServiceInterpreter }
+import com.talkie.client.core.permissions.{ PermissionServiceInterpreterImpl, PermissionServiceInterpreter }
+import com.talkie.client.core.scheduler.{ SchedulerServiceInterpreter, SchedulerServiceInterpreterImpl }
+import com.talkie.client.core.services.{ Service, ServiceInterpreter }
+import com.talkie.client.domain.tracking.{ TrackingServiceInterpreterImpl, TrackingServiceInterpreter }
 
 import scalaz.concurrent.Task
 
@@ -18,7 +18,7 @@ final class ServiceInterpreterImpl(context: Context, activity: Activity) extends
   // core
 
   val eventSI: EventServiceInterpreter = new EventServiceInterpreterImpl(context)
-  val facebookSI: FacebookServiceInterpreter = new FacebookServiceInterpreterImpl(context, eventSI)
+  val facebookSI: FacebookServiceInterpreter = new FacebookServiceInterpreterImpl(context, activity, eventSI)
   val permissionSI: PermissionServiceInterpreter = new PermissionServiceInterpreterImpl(context, activity)
   val locationSI: LocationServiceInterpreter = new LocationServiceInterpreterImpl(context, permissionSI)
   val schedulerSI: SchedulerServiceInterpreter = new SchedulerServiceInterpreterImpl(context)
@@ -30,11 +30,13 @@ final class ServiceInterpreterImpl(context: Context, activity: Activity) extends
 
   // app
 
-  val navigationSI: NavigationServiceInterpreter = new NavigationServiceInterpreterImpl(context, eventSI, facebookSI)
+  val navigationSI: NavigationServiceInterpreter =
+    new NavigationServiceInterpreterImpl(context, activity, eventSI, facebookSI)
 
   // forService
 
-  val forService = (eventSI.forService)
+  val forService = PartialFunction.empty
+    .orElse(eventSI.forService)
     .orElse(facebookSI.forService)
     .orElse(permissionSI.forService)
     .orElse(locationSI.forService)

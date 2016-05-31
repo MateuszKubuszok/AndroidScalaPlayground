@@ -2,6 +2,7 @@ package com.talkie.client.core.components
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.{ MenuItem, Menu }
 
 import scala.collection.mutable
 
@@ -89,4 +90,23 @@ trait Activity extends android.app.Activity {
     super.onActivityResult(requestCode, resultCode, data)
     onActivityResultBlocks.foreach { _(requestCode, resultCode, data) }
   }
+
+  private val onBackPressedBlocks = mutable.MutableList[() => Unit]()
+  def onBackPressed(block: => Unit): Unit = onBackPressedBlocks += (block _)
+  override protected def onBackPressed(): Unit = {
+    super.onBackPressed()
+    onBackPressedBlocks.foreach { _() }
+  }
+
+  private val onCreateOptionsMenuBlocks = mutable.MutableList[Menu => Boolean]()
+  def onCreateOptionsMenu(block: => Boolean): Unit = onCreateOptionsMenuBlocks += (_ => block)
+  def onCreateOptionsMenu(block: Menu => Boolean): Unit = onCreateOptionsMenuBlocks += block
+  override protected def onCreateOptionsMenu(menu: Menu): Boolean =
+    super.onCreateOptionsMenu(menu) && onCreateOptionsMenuBlocks.forall { _(menu) }
+
+  private val onOptionsItemSelectedBlocks = mutable.MutableList[MenuItem => Boolean]()
+  def onOptionsItemSelected(block: => Boolean): Unit = onOptionsItemSelectedBlocks += (_ => block)
+  def onOptionsItemSelected(block: MenuItem => Boolean): Unit = onOptionsItemSelectedBlocks += block
+  override protected def onOptionsItemSelected(item: MenuItem): Boolean =
+    onOptionsItemSelectedBlocks.exists { _(item) } || super.onOptionsItemSelected(item)
 }

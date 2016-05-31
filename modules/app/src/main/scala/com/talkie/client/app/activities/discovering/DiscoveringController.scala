@@ -5,14 +5,17 @@ import android.support.v4.view.GravityCompat
 import android.support.v7.app.{ ActionBarDrawerToggle, AppCompatActivity }
 import android.view.View
 import com.talkie.client.app.activities.common.Controller
-import com.talkie.client.domain.services.facebook.FacebookMessages.LogoutRequest
+import com.talkie.client.app.navigation.NavigationService.moveToSettings
+import com.talkie.client.core.components.Activity
+import com.talkie.client.core.facebook.FacebookService.logOutFromFacebook
+import com.talkie.client.core.services.ServiceInterpreter._
 import com.talkie.client.views.R
-import com.talkie.client.views.common.{ Listeners, RichActivity }
+import com.talkie.client.views.common.Listeners
 import com.talkie.client.views.common.scaloid.support.design.widget.SOnNavigationItemSelectedListener
 import com.talkie.client.views.discovering.DiscoveringViews
 
 trait DiscoveringController extends Controller {
-  self: AppCompatActivity with RichActivity with SOnNavigationItemSelectedListener with DiscoveringViews =>
+  self: AppCompatActivity with Activity with SOnNavigationItemSelectedListener with DiscoveringViews =>
 
   private implicit val c = context
 
@@ -45,9 +48,6 @@ trait DiscoveringController extends Controller {
   onBackPressed {
     if (layout.isDrawerOpen(GravityCompat.START)) {
       layout.closeDrawer(GravityCompat.START)
-      true
-    } else {
-      false
     }
   }
 
@@ -59,12 +59,10 @@ trait DiscoveringController extends Controller {
   onOptionsItemSelected { item =>
     item.getItemId match {
       case R.id.action_settings =>
-        manualNavigation.startSettingsActivity()
+        moveToSettings.fireAndForget()
         true
       case R.id.action_logout =>
-        sharedServices { services =>
-          services.facebookServices.logout(LogoutRequest())
-        }
+        logOutFromFacebook.fireAndForget()
         true
       case _ => false
     }

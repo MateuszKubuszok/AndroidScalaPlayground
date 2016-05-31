@@ -22,7 +22,6 @@ class ProfileRepositoryImpl(databaseClient: DatabaseClient) extends EntityReposi
 
     def facebookId = column[FacebookId]("FacebookId")(facebookIdTypeMapper)
 
-
     def fullProjection = (id, version, createdAt, updatedAt, facebookId)
 
     override def * = {

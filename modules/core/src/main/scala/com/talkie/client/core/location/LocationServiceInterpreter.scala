@@ -4,20 +4,22 @@ import android.content.Context._
 import android.location.{ LocationListener => Listener, LocationManager => Manager, _ }
 import com.talkie.client.core.context.Context
 import com.talkie.client.core.location.LocationProviders.{ LocationProvider => Provider }
-import com.talkie.client.core.permissions.{ PermissionService, PermissionServiceInterpreter, RequiredPermissions }
-import com.talkie.client.core.services.~@~>
+import com.talkie.client.core.permissions.{ PermissionServiceInterpreter, RequiredPermissions }
+import com.talkie.client.core.permissions.PermissionService._
+import com.talkie.client.core.permissions.PermissionServiceInterpreter._
+import com.talkie.client.core.services.{ ~@~>, ~&~> }
 
 import scala.concurrent.duration._
 import scalaz.concurrent.Task
 
 trait LocationServiceInterpreter extends (LocationService ~@~> Task)
 
-final class LocationServiceInterpreterImpl(
-    context: Context,
-    permissionServiceInterpreter: PermissionServiceInterpreter
-  ) extends LocationServiceInterpreter {
+object LocationServiceInterpreter extends (LocationService ~&~> Task)
 
-  import PermissionService._
+final class LocationServiceInterpreterImpl(
+    context:                                   Context,
+    implicit val permissionServiceInterpreter: PermissionServiceInterpreter
+) extends LocationServiceInterpreter {
 
   private val logger = context.loggerFor(this)
 
@@ -44,16 +46,16 @@ final class LocationServiceInterpreterImpl(
   override def apply[R](in: LocationService[R]): Task[R] = in match {
 
     case CheckLastKnownLocation(provider) => requirePermissions(requiredPermission)
-        .foldMap(permissionServiceInterpreter)
-        .ensuring(requiredPermission) {
-      lastKnownLocation(provider).asInstanceOf[R]
-    }
+      .interpret
+      .ensuringPermissions() {
+        lastKnownLocation(provider).asInstanceOf[R]
+      }
 
     case RegisterLocationListener(listener, providers @ _*) => requirePermissions(requiredPermission)
-        .foldMap(permissionServiceInterpreter)
-        .ensuring(requiredPermission) {
-      registerLocationListener(listener, providers: _*).asInstanceOf[R]
-    }
+      .interpret
+      .ensuringPermissions() {
+        registerLocationListener(listener, providers: _*).asInstanceOf[R]
+      }
 
     case RemoveLocationListener(listener) => Task {
       removeLocationListener(listener).asInstanceOf[R]
@@ -63,6 +65,7 @@ final class LocationServiceInterpreterImpl(
   private def lastKnownLocation(provider: Provider): Option[Location] = {
     logger trace s"Requested last known location using: $provider for fallback"
 
+    // TODO: this logic makes no sense...
     val locationOpt = Option {
       manager.getBestProvider(enabledProviderCriteria, true)
     } orElse Option {

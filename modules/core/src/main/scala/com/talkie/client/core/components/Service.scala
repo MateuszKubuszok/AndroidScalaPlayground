@@ -17,11 +17,10 @@ trait Service extends android.app.Service {
 
   private val onStartCommandBlocks = mutable.MutableList[() => Unit]()
   protected def onStartCommand(block: => Unit): Unit = onStartCommandBlocks += (block _)
-  override protected def onStartCommand(intent: Intent, flags: Int, startId: Int): Unit = {
-    super.onStartCommand(intent: Intent, flags: Int, startId: Int)
+  override protected def onStartCommand(intent: Intent, flags: Int, startId: Int): Int = {
     onStartCommandBlocks.foreach { _() }
+    super.onStartCommand(intent: Intent, flags: Int, startId: Int)
   }
-
 
   private val onDestroyBlocks = mutable.MutableList[() => Unit]()
   protected def onDestroy(block: => Unit): Unit = onDestroyBlocks += (block _)

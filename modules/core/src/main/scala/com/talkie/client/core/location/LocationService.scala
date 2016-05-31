@@ -14,10 +14,10 @@ final case class RemoveLocationListener(listener: Listener) extends LocationServ
 object LocationService {
 
   def checkLastKnownLocation(providers: Provider*): Free[LocationService, Boolean] =
-    Free.liftF(CheckLastKnownLocation(providers:_*): LocationService[Boolean])
+    Free.liftF(CheckLastKnownLocation(providers: _*): LocationService[Boolean])
 
   def registerLocationListener(listener: Listener, providers: Provider*): Free[LocationService, Boolean] =
-    Free.liftF(RegisterLocationListener(listener, providers:_*): LocationService[Boolean])
+    Free.liftF(RegisterLocationListener(listener, providers: _*): LocationService[Boolean])
 
   def removeLocationListener(listener: Listener): Free[LocationService, Boolean] =
     Free.liftF(RemoveLocationListener(listener): LocationService[Boolean])

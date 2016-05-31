@@ -11,13 +11,13 @@ package object permissions {
 
   implicit class WithPermissions(permissionsT: Task[PermissionStatusMap]) {
 
-    def ensuring[T](ensured: RequiredPermission*)(block: => T): Task[T] = permissionsT.map { permissions =>
+    def ensuringPermissions[T](ensured: RequiredPermission*)(block: => T): Task[T] = permissionsT.map { permissions =>
 
       val failed = ensured.toSet.filter { checked =>
         permissions.getOrElse(checked, PermissionStatuses.Denied) != PermissionStatuses.Granted
       }
 
-      if (failed.nonEmpty) throw PermissionException(failed.toSeq:_*)
+      if (failed.nonEmpty) throw PermissionException(failed.toSeq: _*)
       else block
     }
   }

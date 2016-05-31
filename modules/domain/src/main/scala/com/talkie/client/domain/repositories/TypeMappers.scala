@@ -1,7 +1,7 @@
 package com.talkie.client.domain.repositories
 
 import com.talkie.client.core.repositories.EntityMappers
-import com.talkie.client.domain.repositories.profiles.FacebookId
+import com.talkie.client.domain.profile.FacebookId
 
 import scala.slick.driver.SQLiteDriver.simple._
 

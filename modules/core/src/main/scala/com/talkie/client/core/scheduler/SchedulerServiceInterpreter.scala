@@ -4,12 +4,14 @@ import com.talkie.client.core.context.{ SharedState, Context }
 
 import java.util.concurrent.TimeUnit.MILLISECONDS
 
-import com.talkie.client.core.services.~@~>
+import com.talkie.client.core.services.{ ~@~>, ~&~> }
 
 import scala.concurrent.duration.Duration
 import scalaz.concurrent.Task
 
 trait SchedulerServiceInterpreter extends (SchedulerService ~@~> Task)
+
+object SchedulerServiceInterpreter extends (SchedulerService ~&~> Task)
 
 final class SchedulerServiceInterpreterImpl(context: Context) extends SchedulerServiceInterpreter {
 

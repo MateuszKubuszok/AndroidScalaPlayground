@@ -1,28 +1,24 @@
 package com.talkie.client.app.activities.main
 
 import com.talkie.client.app.activities.common.Controller
+import com.talkie.client.app.navigation.NavigationService._
+import com.talkie.client.core.components.Activity
+import com.talkie.client.core.services.ServiceInterpreter._
 import com.talkie.client.views.R
-import com.talkie.client.views.common.RichActivity
 import com.talkie.client.views.main.MainViews
 
 trait MainController extends Controller {
-  self: RichActivity with MainViews =>
-
-  implicit val ec = context.serviceExecutionContext
+  self: Activity with MainViews =>
 
   onCreate {
     setContentView(R.layout.activity_main)
   }
 
   onStart {
-    asyncAction {
-      authNavigationF map (_.moveDependingOnLoginState())
-    }
+    moveToLoginOrElse(moveTo.discovering).fireAndForget()
   }
 
   onRestart {
-    asyncAction {
-      authNavigationF map (_.moveDependingOnLoginState())
-    }
+    moveToLoginOrElse(moveTo.discovering).fireAndForget()
   }
 }
