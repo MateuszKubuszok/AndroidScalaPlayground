@@ -1,5 +1,5 @@
 package com.talkie.client.app.activities.common
 
-import com.talkie.client.views.common.RichActivity
+import com.talkie.client.core.components.Activity
 
-trait BaseActivity extends RichActivity with ControllerImpl
+trait BaseActivity extends Activity with ControllerImpl

@@ -1,13 +1,13 @@
 package com.talkie.client.core.events
 
 import com.talkie.client.core.context.Context
+import com.talkie.client.core.services.~@~>
 
 import scala.reflect.ClassTag
 import scala.util.Try
-import scalaz._
 import scalaz.concurrent.Task
 
-trait EventServiceInterpreter extends (EventService ~> Task)
+trait EventServiceInterpreter extends (EventService ~@~> Task)
 
 final class EventServiceInterpreterImpl(context: Context) extends EventServiceInterpreter {
 

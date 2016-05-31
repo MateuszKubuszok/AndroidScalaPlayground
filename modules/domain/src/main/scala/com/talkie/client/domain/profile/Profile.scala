@@ -1,4 +1,4 @@
-package com.talkie.client.domain.repositories.profiles
+package com.talkie.client.domain.profile
 
 import com.talkie.client.core.repositories.Entity
 

@@ -1,4 +1,4 @@
-package com.talkie.client.domain.repositories.profiles
+package com.talkie.client.domain.profile
 
 import com.talkie.client.core.repositories._
 import com.talkie.client.domain.repositories.TypeMappers._
@@ -22,12 +22,13 @@ class ProfileRepositoryImpl(databaseClient: DatabaseClient) extends EntityReposi
 
     def facebookId = column[FacebookId]("FacebookId")(facebookIdTypeMapper)
 
-    type ShapeType = (Id[Profile], SysInfo, ProfileData)
-    type TupleType = (Id[Profile], Long, DateTime, DateTime, FacebookId)
 
     def fullProjection = (id, version, createdAt, updatedAt, facebookId)
 
     override def * = {
+
+      type ShapeType = (Id[Profile], SysInfo, ProfileData)
+      type TupleType = (Id[Profile], Long, DateTime, DateTime, FacebookId)
 
       def tuple2Shape(record: TupleType): ShapeType = {
         val id = record._1
