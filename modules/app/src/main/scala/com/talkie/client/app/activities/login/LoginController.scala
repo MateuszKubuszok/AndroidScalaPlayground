@@ -9,7 +9,7 @@ import com.talkie.client.views.R
 trait LoginController extends Controller {
   self: Activity with LoginViews =>
 
-  override protected def loginButtonOpt: Option[LoginButton] = Option(loginButton)
+  override protected lazy val loginButtonOpt: Option[LoginButton] = Option(loginButton)
 
   onCreate {
     setContentView(R.layout.activity_login)

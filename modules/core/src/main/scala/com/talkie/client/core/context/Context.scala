@@ -70,7 +70,12 @@ class ContextImpl(
     put:                                      SharedState => Unit
 ) extends Context {
 
-  override val androidContext = owner.getBaseContext
+  require(owner != null, "Context cannot be initialized with an empty ContextWrapper")
+
+  override lazy val androidContext = {
+    require(owner.getBaseContext != null, "androidContext cannot be used before initialization is finished")
+    owner.getBaseContext
+  }
 
   override def loggerFor(self: Any) = loggerFactory(self)
 

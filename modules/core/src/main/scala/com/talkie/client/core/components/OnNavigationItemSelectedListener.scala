@@ -1,11 +1,11 @@
-package com.talkie.client.views.common.scaloid.support.design.widget
+package com.talkie.client.core.components
 
-import android.support.design.widget.NavigationView.OnNavigationItemSelectedListener
 import android.view.MenuItem
 
 import scala.collection.mutable.ArrayBuffer
 
-trait SOnNavigationItemSelectedListener extends OnNavigationItemSelectedListener {
+trait OnNavigationItemSelectedListener
+    extends android.support.design.widget.NavigationView.OnNavigationItemSelectedListener {
 
   override def onNavigationItemSelected(menuItem: MenuItem): Boolean =
     onNavigationItemSelectedBodies map (body => body(menuItem)) exists identity

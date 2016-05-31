@@ -81,8 +81,8 @@ trait Settings {
       // removed unused
       "-dontwarn com.google.common.**",
       "-dontwarn org.slf4j.**",
-      "-dontwarn org.scaloid.**",
       "-dontwarn scala.slick.**",
+      "-dontwarn scalaz.**",
       "-dontwarn shapeless.**"
     ),
 

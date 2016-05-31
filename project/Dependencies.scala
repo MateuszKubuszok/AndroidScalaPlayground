@@ -27,7 +27,6 @@ trait Dependencies {
 
   // scala
   val scalaLib = "org.scala-lang" % "scala-library" % scalaVersionUsed
-  val scaloid = "org.scaloid" %% "scaloid" % "4.1"
   val scalazCore = "org.scalaz" %% "scalaz-core" % "7.2.3"
   val scalazConcurrent = "org.scalaz" %% "scalaz-concurrent" % "7.2.3"
 
@@ -53,7 +52,7 @@ trait Dependencies {
 
   val androidDeps = Seq(annotations, appcompat, design, support, recyclerview, multidex)
 
-  val mainDeps = Seq(scalaLib, scaloid, scalazCore, scalazConcurrent, sqlDroid, slick, shapeless, joda, jodaConvert,
+  val mainDeps = Seq(scalaLib, scalazCore, scalazConcurrent, sqlDroid, slick, shapeless, joda, jodaConvert,
       facebookSdk) map {
     _ excludeAll ExclusionRule(organization = sdkPrefix)
   }

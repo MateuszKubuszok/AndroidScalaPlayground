@@ -73,7 +73,6 @@ trait Activity extends android.app.Activity {
   // initialization/release
 
   def bootstrap(block: => Unit): Unit = {
-    onCreate(block)
     onResume(block)
   }
 

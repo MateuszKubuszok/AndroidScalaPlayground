@@ -95,6 +95,10 @@ final class FacebookServiceInterpreterImpl(
 
     activity.bootstrap {
       tracker.startTracking()
+      loginButtonOpt.foreach { loginButton =>
+        loginButton.setReadPermissions(permissions: _*)
+        loginButton.registerCallback(callBackManager, LoginResultCallback)
+      }
       logger trace "Started tracing AccessTokens"
     }
 
@@ -105,13 +109,6 @@ final class FacebookServiceInterpreterImpl(
 
     activity.onActivityResult { (requestCode: Int, resultCode: Int, data: Intent) =>
       callBackManager.onActivityResult(requestCode, resultCode, data)
-    }
-
-    activity.onPostCreate {
-      loginButtonOpt.foreach { loginButton =>
-        loginButton.setReadPermissions(permissions: _*)
-        loginButton.registerCallback(callBackManager, LoginResultCallback)
-      }
     }
   }
 

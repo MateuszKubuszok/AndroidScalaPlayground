@@ -1,5 +1,9 @@
 package com.talkie.client.core.services
 
+import java.util.concurrent.atomic.AtomicBoolean
+
+import com.talkie.client.core.logging.LoggerImpl
+
 import scalaz._
 import scalaz.concurrent.Task
 
@@ -29,7 +33,12 @@ object ServiceInterpreter {
 
   implicit class TaskRunner[R](task: Task[R]) {
 
-    def fireAndForget(): Unit = task.unsafePerformAsyncInterruptibly(_ => ())
+    val mockBoolean = new AtomicBoolean(false)
+
+    def fireAndForget(): Unit = task.unsafePerformAsyncInterruptibly({
+      case -\/(error)  => new LoggerImpl(this.getClass.getSimpleName) error (s"Task execution failed", error)
+      case \/-(result) => // ok
+    }, mockBoolean)
 
     def fireAndWait(): \/[Throwable, R] = task.unsafePerformSyncAttempt
   }

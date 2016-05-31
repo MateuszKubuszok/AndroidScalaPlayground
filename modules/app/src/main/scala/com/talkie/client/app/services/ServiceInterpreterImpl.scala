@@ -15,6 +15,8 @@ import scalaz.concurrent.Task
 
 final class ServiceInterpreterImpl(context: Context, activity: Activity) extends ServiceInterpreter {
 
+  private val logger = context.loggerFor(this)
+
   // core
 
   val eventSI: EventServiceInterpreter = new EventServiceInterpreterImpl(context)
@@ -35,6 +37,13 @@ final class ServiceInterpreterImpl(context: Context, activity: Activity) extends
 
   // forService
 
+  val unhandledService: PartialFunction[Service[Nothing], Task[Nothing]] = {
+    case service: Service[_] =>
+      val message = s"Unhandled service: $service"
+      logger error message
+      throw new IllegalStateException(message)
+  }
+
   val forService = PartialFunction.empty
     .orElse(eventSI.forService)
     .orElse(facebookSI.forService)
@@ -43,6 +52,7 @@ final class ServiceInterpreterImpl(context: Context, activity: Activity) extends
     .orElse(schedulerSI.forService)
     .orElse(trackingSI.forService)
     .orElse(navigationSI.forService)
+    .orElse(unhandledService)
 
   def apply[R](in: Service[R]): Task[R] = forService.apply(in.asInstanceOf[Service[Nothing]]).asInstanceOf[Task[R]]
 }

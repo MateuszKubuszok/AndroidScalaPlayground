@@ -102,6 +102,6 @@ final class NavigationServiceInterpreterImpl(
 
   private def startActivity[A <: Activity](implicit classTag: ClassTag[A]): Unit = {
     logger trace s"Moving to ${classTag.toString}"
-    context.androidContext.startActivity(new Intent(context.androidContext, classTag.runtimeClass))
+    activity.startActivity(new Intent(context.androidContext, classTag.runtimeClass))
   }
 }

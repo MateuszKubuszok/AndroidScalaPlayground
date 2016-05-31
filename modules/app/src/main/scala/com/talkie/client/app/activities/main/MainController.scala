@@ -14,11 +14,7 @@ trait MainController extends Controller {
     setContentView(R.layout.activity_main)
   }
 
-  onStart {
-    moveToLoginOrElse(moveTo.discovering).fireAndForget()
-  }
-
-  onRestart {
+  bootstrap {
     moveToLoginOrElse(moveTo.discovering).fireAndForget()
   }
 }
