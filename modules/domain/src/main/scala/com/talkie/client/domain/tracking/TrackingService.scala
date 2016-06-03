@@ -1,28 +1,30 @@
 package com.talkie.client.domain.tracking
 
 import android.location.Location
-import com.talkie.client.core.services.Service
+import com.talkie.client.core.services.{ Service => GenericService }
 
 import scalaz.Free
 
-sealed trait TrackingService[R] extends Service[R]
+sealed trait TrackingService[R] extends GenericService[R]
 case object ConfigureTracking extends TrackingService[Unit]
 case object CheckLastLocation extends TrackingService[Option[Location]]
 case object TurnOnLocationTracking extends TrackingService[Boolean]
 case object TurnOffLocationTracking extends TrackingService[Boolean]
 
-object TrackingService {
+trait TrackingServiceFrees[S[R] >: TrackingService[R]] {
 
-  def configureTracking: Free[TrackingService, Unit] =
-    Free.liftF(ConfigureTracking: TrackingService[Unit])
+  def configureTracking: Free[S, Unit] =
+    Free.liftF(ConfigureTracking: S[Unit])
 
-  def checkLastLocationJob: Free[TrackingService, Option[Location]] =
-    Free.liftF(CheckLastLocation: TrackingService[Option[Location]])
+  def checkLastLocationJob: Free[S, Option[Location]] =
+    Free.liftF(CheckLastLocation: S[Option[Location]])
 
-  def turnOnLocationTrackingJobs: Free[TrackingService, Boolean] =
-    Free.liftF(TurnOnLocationTracking: TrackingService[Boolean])
+  def turnOnLocationTrackingJob: Free[S, Boolean] =
+    Free.liftF(TurnOnLocationTracking: S[Boolean])
 
-  def turnOffLocationTrackingJobs: Free[TrackingService, Boolean] =
-    Free.liftF(TurnOffLocationTracking: TrackingService[Boolean])
+  def turnOffLocationTrackingJob: Free[S, Boolean] =
+    Free.liftF(TurnOffLocationTracking: S[Boolean])
 }
 
+object TrackingService extends TrackingServiceFrees[TrackingService]
+object Service extends TrackingServiceFrees[GenericService]

@@ -1,11 +1,11 @@
 package com.talkie.client.core.scheduler
 
-import com.talkie.client.core.services.Service
+import com.talkie.client.core.services.{ Service => GenericService }
 
 import scala.concurrent.duration.Duration
 import scalaz.Free
 
-sealed trait SchedulerService[R] extends Service[R]
+sealed trait SchedulerService[R] extends GenericService[R]
 final case class ScheduleSingleJob(job: Job, delay: Duration) extends SchedulerService[Boolean]
 final case class ScheduleIntervalJob(job: Job, initialDelay: Duration, delay: Duration)
   extends SchedulerService[Boolean]
@@ -13,17 +13,25 @@ final case class SchedulePeriodicJob(job: Job, initialDelay: Duration, period: D
   extends SchedulerService[Boolean]
 final case class CancelJob(job: Job, canInterrupt: Boolean) extends SchedulerService[Boolean]
 
-object SchedulerService {
+trait Helper {
 
-  def scheduleSingleJob(job: Job, delay: Duration): Free[SchedulerService, Boolean] =
-    Free.liftF(ScheduleSingleJob(job, delay): SchedulerService[Boolean])
-
-  def scheduleIntervalJob(job: Job, initialDelay: Duration, delay: Duration): Free[SchedulerService, Boolean] =
-    Free.liftF(ScheduleIntervalJob(job, initialDelay, delay): SchedulerService[Boolean])
-
-  def schedulePeriodicJob(job: Job, initialDelay: Duration, period: Duration): Free[SchedulerService, Boolean] =
-    Free.liftF(SchedulePeriodicJob(job, initialDelay, period): SchedulerService[Boolean])
-
-  def cancelJob(job: Job, canInterrupt: Boolean): Free[SchedulerService, Boolean] =
-    Free.liftF(CancelJob(job, canInterrupt): SchedulerService[Boolean])
+  type S[R] >: SchedulerService[R] <: GenericService[R]
 }
+
+trait SchedulerServiceFrees[S[R] >: SchedulerService[R]] {
+
+  def scheduleSingleJob(job: Job, delay: Duration): Free[S, Boolean] =
+    Free.liftF(ScheduleSingleJob(job, delay): S[Boolean])
+
+  def scheduleIntervalJob(job: Job, initialDelay: Duration, delay: Duration): Free[S, Boolean] =
+    Free.liftF(ScheduleIntervalJob(job, initialDelay, delay): S[Boolean])
+
+  def schedulePeriodicJob(job: Job, initialDelay: Duration, period: Duration): Free[S, Boolean] =
+    Free.liftF(SchedulePeriodicJob(job, initialDelay, period): S[Boolean])
+
+  def cancelJob(job: Job, canInterrupt: Boolean): Free[S, Boolean] =
+    Free.liftF(CancelJob(job, canInterrupt): S[Boolean])
+}
+
+object SchedulerService extends SchedulerServiceFrees[SchedulerService]
+object Service extends SchedulerServiceFrees[GenericService]
