@@ -3,8 +3,8 @@ package com.talkie.client.app.activities.common
 import android.content.Context
 import com.facebook.login.widget.LoginButton
 import com.talkie.client.app.navigation.Service._
+import com.talkie.client.common.logging.Logger
 import com.talkie.client.core.facebook.Service._
-import com.talkie.client.core.logging.Logger
 import com.talkie.client.domain.tracking.Service._
 import com.talkie.client.views.TypedFindView
 import com.talkie.client.views.common.views.TypedFindLayout

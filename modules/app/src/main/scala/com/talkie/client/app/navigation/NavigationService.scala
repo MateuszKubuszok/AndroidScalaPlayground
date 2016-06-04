@@ -1,6 +1,6 @@
 package com.talkie.client.app.navigation
 
-import com.talkie.client.core.services.{ Service => GenericService }
+import com.talkie.client.common.services.{ Service => GenericService }
 
 import scalaz.Free
 

@@ -1,10 +1,11 @@
 package com.talkie.client.core.scheduler
 
-import com.talkie.client.core.context.{ SharedState, Context }
-
 import java.util.concurrent.TimeUnit.MILLISECONDS
 
-import com.talkie.client.core.services.{ ~@~>, ~&~> }
+import com.talkie.client.common.context.Context
+import com.talkie.client.common.scheduler.Job
+import com.talkie.client.common.context.SharedState
+import com.talkie.client.common.services.{ ~@~>, ~&~> }
 
 import scala.concurrent.duration.Duration
 import scalaz.concurrent.Task

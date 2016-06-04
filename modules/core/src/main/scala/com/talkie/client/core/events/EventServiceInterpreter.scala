@@ -1,7 +1,8 @@
 package com.talkie.client.core.events
 
-import com.talkie.client.core.context.Context
-import com.talkie.client.core.services.{ ~@~>, ~&~> }
+import com.talkie.client.common.context.Context
+import com.talkie.client.common.events.{ Event, EventListener }
+import com.talkie.client.common.services.{ ~@~>, ~&~> }
 
 import scala.reflect.ClassTag
 import scala.util.Try

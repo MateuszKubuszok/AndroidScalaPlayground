@@ -1,6 +1,7 @@
 package com.talkie.client.core.events
 
-import com.talkie.client.core.services.{ Service => GenericService }
+import com.talkie.client.common.events.{ EventListener, Event }
+import com.talkie.client.common.services.{ Service => GenericService }
 
 import scala.reflect.ClassTag
 import scalaz.Free

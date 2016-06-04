@@ -1,9 +1,9 @@
-package com.talkie.client.core.context
+package com.talkie.client.common.context
 
 import java.util.concurrent.ScheduledFuture
 
-import com.talkie.client.core.events.{ Event, EventListener }
-import com.talkie.client.core.scheduler.Job
+import com.talkie.client.common.events.{ EventListener, Event }
+import com.talkie.client.common.scheduler.Job
 
 import scala.concurrent.Promise
 import scala.reflect.ClassTag

@@ -1,7 +1,7 @@
 package com.talkie.client.domain.tracking
 
 import android.location.Location
-import com.talkie.client.core.services.{ Service => GenericService }
+import com.talkie.client.common.services.{ Service => GenericService }
 
 import scalaz.Free
 

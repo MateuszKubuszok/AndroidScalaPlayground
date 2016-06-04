@@ -1,11 +1,11 @@
-package com.talkie.client.core.components
+package com.talkie.client.common.components
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.{ MenuItem, Menu }
-import com.talkie.client.core.context.{ ContextImpl, Context }
-import com.talkie.client.core.logging.Logger
-import com.talkie.client.core.services.ServiceInterpreter
+import android.view.{ Menu, MenuItem }
+import com.talkie.client.common.context.{ Context, ContextImpl }
+import com.talkie.client.common.logging.Logger
+import com.talkie.client.common.services.ServiceInterpreter
 
 import scala.collection.mutable
 

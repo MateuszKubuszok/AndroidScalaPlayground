@@ -1,8 +1,8 @@
-package com.talkie.client.core.services
+package com.talkie.client.common.services
 
 import java.util.concurrent.atomic.AtomicBoolean
 
-import com.talkie.client.core.logging.LoggerImpl
+import com.talkie.client.common.logging.LoggerImpl
 
 import scalaz._
 import scalaz.concurrent.Task

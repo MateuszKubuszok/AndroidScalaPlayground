@@ -4,12 +4,12 @@ import android.content.Intent
 import com.facebook.login.widget.LoginButton
 import com.facebook.login.{ LoginManager, LoginResult }
 import com.facebook._
-import com.talkie.client.core.components.Activity
-import com.talkie.client.core.context.Context
+import com.talkie.client.common.components.Activity
+import com.talkie.client.common.context.Context
+import com.talkie.client.common.services.{ ~@~>, ~&~> }
 import com.talkie.client.core.events.EventService._
 import com.talkie.client.core.events.EventServiceInterpreter
 import com.talkie.client.core.events.EventServiceInterpreter._
-import com.talkie.client.core.services.{ ~@~>, ~&~> }
 
 import scalaz.concurrent.Task
 

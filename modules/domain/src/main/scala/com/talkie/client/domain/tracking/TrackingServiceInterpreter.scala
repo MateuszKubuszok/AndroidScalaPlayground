@@ -2,16 +2,18 @@ package com.talkie.client.domain.tracking
 
 import android.location.{ Location, LocationListener }
 import android.os.Bundle
-import com.talkie.client.core.components.Activity
-import com.talkie.client.core.context.Context
+import com.talkie.client.common.components.Activity
+import com.talkie.client.common.context.Context
+import com.talkie.client.common.scheduler.Job
+import com.talkie.client.common.services.ServiceInterpreter
+import com.talkie.client.common.services.{ ~@~>, ~&~> }
 import com.talkie.client.core.events.EventService._
 import com.talkie.client.core.events.EventServiceInterpreter
 import com.talkie.client.core.location.LocationService._
 import com.talkie.client.core.location.{ LocationProviders, LocationProviderStatuses, LocationServiceInterpreter }
 import com.talkie.client.core.scheduler.SchedulerService._
-import com.talkie.client.core.scheduler.{ Job, SchedulerServiceInterpreter }
-import com.talkie.client.core.services.{ ~@~>, ~&~> }
-import com.talkie.client.core.services.ServiceInterpreter.TaskRunner
+import com.talkie.client.core.scheduler.SchedulerServiceInterpreter
+import ServiceInterpreter.TaskRunner
 
 import scala.concurrent.duration._
 import scalaz.concurrent.Task

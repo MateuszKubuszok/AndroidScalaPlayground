@@ -4,14 +4,16 @@ import android.content.Intent
 import com.talkie.client.app.activities.discovering.DiscoveringActivity
 import com.talkie.client.app.activities.login.LoginActivity
 import com.talkie.client.app.activities.settings.SettingsActivity
-import com.talkie.client.core.components.Activity
-import com.talkie.client.core.context.Context
+import com.talkie.client.common.components.Activity
+import com.talkie.client.common.context.Context
+import com.talkie.client.common.events.EventListener
+import com.talkie.client.common.services.ServiceInterpreter
+import com.talkie.client.common.services.{ ~@~>, ~&~> }
 import com.talkie.client.core.events.EventService._
-import com.talkie.client.core.events.{ EventListener, EventServiceInterpreter }
+import com.talkie.client.core.events.EventServiceInterpreter
 import com.talkie.client.core.facebook._
 import com.talkie.client.core.facebook.FacebookService._
-import com.talkie.client.core.services.{ ~@~>, ~&~> }
-import com.talkie.client.core.services.ServiceInterpreter.TaskRunner
+import ServiceInterpreter.TaskRunner
 
 import scala.reflect.ClassTag
 import scalaz.concurrent.Task

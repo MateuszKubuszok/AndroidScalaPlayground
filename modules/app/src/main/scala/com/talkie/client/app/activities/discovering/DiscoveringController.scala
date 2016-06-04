@@ -6,15 +6,16 @@ import android.support.v7.app.{ ActionBarDrawerToggle, AppCompatActivity }
 import android.view.View
 import com.talkie.client.app.activities.common.Controller
 import com.talkie.client.app.navigation.NavigationService.moveToSettings
-import com.talkie.client.core.components.{ OnNavigationItemSelectedListener, Activity }
+import com.talkie.client.common.components
+import com.talkie.client.common.components.Activity
+import com.talkie.client.common.services.ServiceInterpreter._
 import com.talkie.client.core.facebook.FacebookService.logOutFromFacebook
-import com.talkie.client.core.services.ServiceInterpreter._
 import com.talkie.client.views.R
 import com.talkie.client.views.common.Listeners
 import com.talkie.client.views.discovering.DiscoveringViews
 
 trait DiscoveringController extends Controller {
-  self: AppCompatActivity with Activity with OnNavigationItemSelectedListener with DiscoveringViews =>
+  self: AppCompatActivity with Activity with components.OnNavigationItemSelectedListener with DiscoveringViews =>
 
   private implicit val c = context
 

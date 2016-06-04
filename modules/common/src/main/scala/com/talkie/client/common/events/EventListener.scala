@@ -1,4 +1,4 @@
-package com.talkie.client.core.events
+package com.talkie.client.common.events
 
 trait EventListener[E <: Event] {
 

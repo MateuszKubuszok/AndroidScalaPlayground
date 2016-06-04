@@ -1,10 +1,10 @@
-package com.talkie.client.core.services
+package com.talkie.client.common.services
 
 import java.util.concurrent.TimeUnit.SECONDS
 import java.util.concurrent.{ SynchronousQueue, ThreadPoolExecutor }
 
 import android.os.Looper
-import com.talkie.client.core.logging.LoggerImpl
+import com.talkie.client.common.logging.LoggerImpl
 
 import scala.collection.mutable
 

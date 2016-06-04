@@ -1,7 +1,7 @@
 package com.talkie.client.app.activities.login
 
 import com.talkie.client.app.activities.common.Controller
-import com.talkie.client.core.components.Activity
+import com.talkie.client.common.components.Activity
 import com.talkie.client.views.login.LoginViews
 import com.talkie.client.views.R
 

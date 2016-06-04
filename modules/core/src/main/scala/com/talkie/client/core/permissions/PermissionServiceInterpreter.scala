@@ -2,9 +2,9 @@ package com.talkie.client.core.permissions
 
 import android.app.Activity
 import android.content.pm.PackageManager
-import com.talkie.client.core.context.Context
+import com.talkie.client.common.context.Context
+import com.talkie.client.common.services.{ ~@~>, ~&~> }
 import com.talkie.client.core.permissions.RequiredPermissions._
-import com.talkie.client.core.services.{ ~@~>, ~&~> }
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{ Await, Promise }

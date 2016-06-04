@@ -1,7 +1,7 @@
 package com.talkie.client.core.location
 
 import android.location.{ LocationListener => Listener }
-import com.talkie.client.core.services.{ Service => GenericService }
+import com.talkie.client.common.services.{ Service => GenericService }
 import com.talkie.client.core.location.LocationProviders.{ LocationProvider => Provider }
 
 import scalaz.Free

@@ -2,7 +2,7 @@ package com.talkie.client.core.facebook
 
 import com.facebook.FacebookException
 import com.facebook.login.LoginResult
-import com.talkie.client.core.events.Event
+import com.talkie.client.common.events.Event
 
 case class LoginSucceeded(result: LoginResult) extends Event {
 

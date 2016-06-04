@@ -1,8 +1,8 @@
-package com.talkie.client.core.services
+package com.talkie.client.common.services
 
 import scala.reflect.ClassTag
 import scalaz.concurrent.Task
-import scalaz.{ Monad, \/, Free, ~> }
+import scalaz.{ Free, Monad, \/, ~> }
 
 abstract class PartialServiceInterpreter[From[_] <: Service[_], To[_]](implicit classTag: ClassTag[From[_]])
     extends (From ~> To) {

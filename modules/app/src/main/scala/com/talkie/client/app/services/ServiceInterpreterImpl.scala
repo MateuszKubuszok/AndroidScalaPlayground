@@ -1,14 +1,14 @@
 package com.talkie.client.app.services
 
-import com.talkie.client.app.navigation.{ NavigationServiceInterpreterImpl, NavigationServiceInterpreter }
-import com.talkie.client.core.components.Activity
-import com.talkie.client.core.context.Context
+import com.talkie.client.app.navigation.{ NavigationServiceInterpreter, NavigationServiceInterpreterImpl }
+import com.talkie.client.common.components.Activity
+import com.talkie.client.common.context.Context
+import com.talkie.client.common.services.{ Service, ServiceInterpreter }
 import com.talkie.client.core.events.{ EventServiceInterpreter, EventServiceInterpreterImpl }
 import com.talkie.client.core.facebook.{ FacebookServiceInterpreter, FacebookServiceInterpreterImpl }
 import com.talkie.client.core.location.{ LocationServiceInterpreterImpl, LocationServiceInterpreter }
 import com.talkie.client.core.permissions.{ PermissionServiceInterpreterImpl, PermissionServiceInterpreter }
 import com.talkie.client.core.scheduler.{ SchedulerServiceInterpreter, SchedulerServiceInterpreterImpl }
-import com.talkie.client.core.services.{ Service, ServiceInterpreter }
 import com.talkie.client.domain.tracking.{ TrackingServiceInterpreterImpl, TrackingServiceInterpreter }
 
 import scalaz.concurrent.Task

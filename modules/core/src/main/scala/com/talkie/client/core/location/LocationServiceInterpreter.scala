@@ -2,12 +2,12 @@ package com.talkie.client.core.location
 
 import android.content.Context._
 import android.location.{ LocationListener => Listener, LocationManager => Manager, _ }
-import com.talkie.client.core.context.Context
+import com.talkie.client.common.context.Context
 import com.talkie.client.core.location.LocationProviders.{ LocationProvider => Provider }
 import com.talkie.client.core.permissions.{ PermissionServiceInterpreter, RequiredPermissions }
 import com.talkie.client.core.permissions.PermissionService._
 import com.talkie.client.core.permissions.PermissionServiceInterpreter._
-import com.talkie.client.core.services.{ ~@~>, ~&~> }
+import com.talkie.client.common.services.{ ~@~>, ~&~> }
 
 import scala.concurrent.duration._
 import scalaz.concurrent.Task

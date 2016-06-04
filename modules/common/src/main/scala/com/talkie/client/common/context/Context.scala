@@ -1,9 +1,9 @@
-package com.talkie.client.core.context
+package com.talkie.client.common.context
 
 import java.util.concurrent.{ Executors, ScheduledExecutorService }
 
-import com.talkie.client.core.logging.{ Logger, LoggerImpl }
-import com.talkie.client.core.services.ServiceExecutor
+import com.talkie.client.common.logging.{ Logger, LoggerImpl }
+import com.talkie.client.common.services.ServiceExecutor
 
 import scala.concurrent.ExecutionContext
 import scalaz.State._

@@ -1,4 +1,4 @@
-package com.talkie.client.core
+package com.talkie.client.common
 
 package object services {
 

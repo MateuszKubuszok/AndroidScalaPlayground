@@ -1,4 +1,4 @@
-package com.talkie.client.core.components
+package com.talkie.client.common.components
 
 import android.content.Intent
 

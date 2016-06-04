@@ -1,6 +1,7 @@
 package com.talkie.client.core.scheduler
 
-import com.talkie.client.core.services.{ Service => GenericService }
+import com.talkie.client.common.scheduler.Job
+import com.talkie.client.common.services.{ Service => GenericService }
 
 import scala.concurrent.duration.Duration
 import scalaz.Free
@@ -12,11 +13,6 @@ final case class ScheduleIntervalJob(job: Job, initialDelay: Duration, delay: Du
 final case class SchedulePeriodicJob(job: Job, initialDelay: Duration, period: Duration)
   extends SchedulerService[Boolean]
 final case class CancelJob(job: Job, canInterrupt: Boolean) extends SchedulerService[Boolean]
-
-trait Helper {
-
-  type S[R] >: SchedulerService[R] <: GenericService[R]
-}
 
 trait SchedulerServiceFrees[S[R] >: SchedulerService[R]] {
 

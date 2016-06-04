@@ -1,7 +1,7 @@
 package com.talkie.client.core.permissions
 
+import com.talkie.client.common.services.{ Service => GenericService }
 import com.talkie.client.core.permissions.RequiredPermissions.RequiredPermission
-import com.talkie.client.core.services.{ Service => GenericService }
 
 import scalaz.Free
 
