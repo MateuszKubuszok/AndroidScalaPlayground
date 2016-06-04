@@ -1,21 +1,11 @@
 package com.talkie.client.app.navigation
 
-import android.content.Intent
-import com.talkie.client.app.activities.discovering.DiscoveringActivity
-import com.talkie.client.app.activities.login.LoginActivity
-import com.talkie.client.app.activities.settings.SettingsActivity
 import com.talkie.client.common.components.Activity
 import com.talkie.client.common.context.Context
-import com.talkie.client.common.events.EventListener
-import com.talkie.client.common.services.ServiceInterpreter
 import com.talkie.client.common.services.{ ~@~>, ~&~> }
-import com.talkie.client.core.events.EventService._
 import com.talkie.client.core.events.EventServiceInterpreter
-import com.talkie.client.core.facebook._
-import com.talkie.client.core.facebook.FacebookService._
-import ServiceInterpreter.TaskRunner
+import com.talkie.client.core.facebook.FacebookServiceInterpreter
 
-import scala.reflect.ClassTag
 import scalaz.concurrent.Task
 
 trait NavigationServiceInterpreter extends (NavigationService ~@~> Task)
@@ -23,96 +13,34 @@ trait NavigationServiceInterpreter extends (NavigationService ~@~> Task)
 object NavigationServiceInterpreter extends (NavigationService ~&~> Task)
 
 final class NavigationServiceInterpreterImpl(
-    context:                 Context,
-    activity:                Activity,
-    implicit val eventSI:    EventServiceInterpreter,
-    implicit val facebookSI: FacebookServiceInterpreter
+    context:    Context,
+    activity:   Activity,
+    eventSI:    EventServiceInterpreter,
+    facebookSI: FacebookServiceInterpreter
 ) extends NavigationServiceInterpreter {
 
-  private val logger = context loggerFor this
+  private val actions = new NavigationActions(context, activity, eventSI, facebookSI)
 
   override def apply[R](in: NavigationService[R]): Task[R] = in match {
 
     case ConfigureNavigation => Task {
-      configureNavigation().asInstanceOf[R]
+      actions.configureNavigation().asInstanceOf[R]
     }
 
     case MoveToDiscovering => Task {
-      moveToDiscovering().asInstanceOf[R]
+      actions.moveToDiscovering().asInstanceOf[R]
     }
 
     case MoveToSettings => Task {
-      moveToSettings().asInstanceOf[R]
+      actions.moveToSettings().asInstanceOf[R]
     }
 
     case MoveToLogin => Task {
-      moveToLogin().asInstanceOf[R]
+      actions.moveToLogin().asInstanceOf[R]
     }
 
-    case MoveToLoginOrElse(moveTo) => moveToLoginOrElse(moveTo).asInstanceOf[Task[R]]
-  }
-
-  private object OnUserLoggedIn extends EventListener[LoginSucceeded] {
-
-    override def handleEvent(event: LoginSucceeded) = {
-      Task(moveToDiscovering()).fireAndForget()
-      true
-    }
-  }
-
-  private object OnUserLoggedOut extends EventListener[LoggedOut] {
-
-    override def handleEvent(event: LoggedOut) = {
-      Task(moveToLogin()).fireAndForget()
-      true
-    }
-  }
-
-  private def configureNavigation(): Unit = {
-    import com.talkie.client.core.events.EventServiceInterpreter._
-
-    activity.bootstrap {
-      (for {
-        _ <- registerEventListener(OnUserLoggedIn)
-        _ <- registerEventListener(OnUserLoggedOut)
-      } yield ()).fireAndWait()
-    }
-
-    activity.teardown {
-      (for {
-        _ <- removeEventListener(OnUserLoggedIn)
-        _ <- removeEventListener(OnUserLoggedOut)
-      } yield ()).fireAndWait()
-    }
-  }
-
-  private def moveToDiscovering(): Unit = {
-    logger info "Moving to DiscoveringActivity"
-    startActivity[DiscoveringActivity]
-  }
-
-  private def moveToSettings(): Unit = {
-    logger info "Moving to SettingsActivity"
-    startActivity[SettingsActivity]
-  }
-
-  private def moveToLogin(): Unit = {
-    logger info "Moving to LoginActivity"
-    startActivity[LoginActivity]
-  }
-
-  private def moveToLoginOrElse[R](moveTo: MoveTo[R]): Task[Unit] = {
-    import com.talkie.client.core.facebook.FacebookServiceInterpreter._
-
-    checkIfLoggedToFacebook.interpret.flatMap { isLogged =>
-      logger trace s"User logged?: $isLogged"
-      if (isLogged) apply(moveTo)
-      else Task(moveToLogin())
-    }.map { _ => () }
-  }
-
-  private def startActivity[A <: Activity](implicit classTag: ClassTag[A]): Unit = {
-    logger trace s"Moving to ${classTag.toString}"
-    activity.startActivity(new Intent(context.androidContext, classTag.runtimeClass))
+    case MoveToLoginOrElse(moveTo) => actions.moveToLoginOrElse {
+      apply(moveTo).asInstanceOf[Task[Unit]]
+    }.asInstanceOf[Task[R]]
   }
 }
