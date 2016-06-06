@@ -10,9 +10,6 @@
   <string name="action_logout">Logout</string>
   <string name="title_activity_login">Sign in with Facebook</string>
 
-  <!-- Time delay -->
-  <string name="wait_action">Wait a moment...</string>
-
   <!-- Strings related to login -->
   <string name="prompt_email">Email</string>
   <string name="prompt_password">Password (optional)</string>

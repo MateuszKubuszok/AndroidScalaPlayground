@@ -1,11 +1,24 @@
 package com.talkie.client.app.activities.login
 
-import android.support.v7.app.AppCompatActivity
-import com.talkie.client.app.activities.common.BaseActivity
-import com.talkie.client.views.login.LoginViewsImpl
+import com.talkie.client.app.activities.common.AppActivity
+import com.talkie.client.common.services.ServiceInterpreter._
+import com.talkie.client.views.login.LoginViewsServiceInterpreterImpl
 
-class LoginActivity
-  extends AppCompatActivity
-  with BaseActivity
-  with LoginController
-  with LoginViewsImpl
+final class LoginActivity extends AppActivity with LoginController {
+
+  override protected val viewInterpreter = new LoginViewsServiceInterpreterImpl(context, this).forService
+
+  override def loginButtonOpt() = getLoginButton.fireAndWait().getOrElse(None)
+
+  onCreate { _ =>
+    initializeLayout.fireAndWait()
+  }
+
+  onStart {
+    moveToDiscoveringActivityIfLoggedIn.fireAndForget()
+  }
+
+  onResume {
+    moveToDiscoveringActivityIfLoggedIn.fireAndForget()
+  }
+}

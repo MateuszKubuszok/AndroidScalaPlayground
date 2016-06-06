@@ -13,7 +13,11 @@ import com.talkie.client.domain.tracking.{ TrackingServiceInterpreterImpl, Track
 
 import scalaz.concurrent.Task
 
-final class ServiceInterpreterImpl(context: Context, activity: Activity) extends ServiceInterpreter {
+final class ServiceInterpreterImpl(
+    context:         Context,
+    activity:        Activity,
+    viewInterpreter: PartialFunction[Service[Nothing], Task[Nothing]]
+) extends ServiceInterpreter {
 
   private val logger = context.loggerFor(this)
 
@@ -45,6 +49,7 @@ final class ServiceInterpreterImpl(context: Context, activity: Activity) extends
   }
 
   val forService = PartialFunction.empty
+    .orElse(viewInterpreter)
     .orElse(eventSI.forService)
     .orElse(facebookSI.forService)
     .orElse(permissionSI.forService)

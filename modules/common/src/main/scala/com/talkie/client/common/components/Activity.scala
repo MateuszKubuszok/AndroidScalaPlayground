@@ -48,7 +48,7 @@ trait Activity extends android.app.Activity {
   def onActivityResult(block: => Unit): Unit
   def onActivityResult(block: (Int, Int, Intent) => Unit): Unit
 
-  def onBackPressed(block: => Unit): Unit
+  def onBackPressed(block: => Boolean): Unit
 
   def onCreateOptionsMenu(block: => Boolean): Unit
   def onCreateOptionsMenu(block: Menu => Boolean): Unit
@@ -161,12 +161,13 @@ trait ActivityImpl extends Activity {
     onActivityResultBlocks.foreach { _(requestCode, resultCode, data) }
   }
 
-  private val onBackPressedBlocks = mutable.MutableList[() => Unit]()
-  override def onBackPressed(block: => Unit): Unit = onBackPressedBlocks += (block _)
+  private val onBackPressedBlocks = mutable.MutableList[() => Boolean]()
+  override def onBackPressed(block: => Boolean): Unit = onBackPressedBlocks += (block _)
   override protected def onBackPressed(): Unit = {
     logger debug s"Running onBackPressed actions (${onBackPressedBlocks.size})"
-    super.onBackPressed()
-    onBackPressedBlocks.foreach { _() }
+    if (!onBackPressedBlocks.exists { _() }) {
+      super.onBackPressed()
+    }
   }
 
   private val onCreateOptionsMenuBlocks = mutable.MutableList[Menu => Boolean]()
@@ -174,7 +175,7 @@ trait ActivityImpl extends Activity {
   override def onCreateOptionsMenu(block: Menu => Boolean): Unit = onCreateOptionsMenuBlocks += block
   override protected def onCreateOptionsMenu(menu: Menu): Boolean = {
     logger debug s"Running onCreateOptionsMenu actions (${onCreateOptionsMenuBlocks.size})"
-    super.onCreateOptionsMenu(menu) && onCreateOptionsMenuBlocks.forall { _(menu) }
+    onCreateOptionsMenuBlocks.exists { _(menu) } || super.onCreateOptionsMenu(menu)
   }
 
   private val onOptionsItemSelectedBlocks = mutable.MutableList[MenuItem => Boolean]()

@@ -1,16 +1,22 @@
 package com.talkie.client.app.activities.login
 
 import com.talkie.client.app.activities.common.Controller
-import com.talkie.client.common.components.Activity
-import com.talkie.client.views.login.LoginViews
-import com.talkie.client.views.R
+import com.talkie.client.app.navigation.Service._
+import com.talkie.client.common.services.Service._
+import com.talkie.client.core.facebook.Service._
+import com.talkie.client.views.login.{ Service => Views }
 
 trait LoginController extends Controller {
-  self: Activity with LoginViews =>
 
-  override protected def loginButtonOpt() = Option(loginButton)
+  final def initializeLayout = Views.initializeLayout
 
-  onCreate {
-    setContentView(R.layout.activity_login)
-  }
+  final def getLoginButton = Views.getLoginButton
+
+  final def moveToDiscoveringActivityIfLoggedIn = for {
+    isLogged <- checkIfLoggedToFacebook
+    _ <- {
+      if (isLogged) moveToDiscovering
+      else doNothing
+    }
+  } yield ()
 }

@@ -1,85 +1,31 @@
 package com.talkie.client.app.activities.discovering
 
-import android.support.design.widget.Snackbar
-import android.support.v4.view.GravityCompat
-import android.support.v7.app.{ ActionBarDrawerToggle, AppCompatActivity }
-import android.view.View
+import android.view.{ Menu, MenuItem }
 import com.talkie.client.app.activities.common.Controller
-import com.talkie.client.app.navigation.NavigationService.moveToSettings
-import com.talkie.client.common.components
-import com.talkie.client.common.components.Activity
-import com.talkie.client.common.services.ServiceInterpreter._
-import com.talkie.client.core.facebook.FacebookService.logOutFromFacebook
-import com.talkie.client.views.R
-import com.talkie.client.views.common.Listeners
-import com.talkie.client.views.discovering.DiscoveringViews
+import com.talkie.client.app.navigation.Service.moveToSettings
+import com.talkie.client.core.facebook.Service.logOutFromFacebook
+import com.talkie.client.views.discovering.{ MenuOptions, Service => Views }
 
 trait DiscoveringController extends Controller {
-  self: AppCompatActivity with Activity with components.OnNavigationItemSelectedListener with DiscoveringViews =>
 
-  private implicit val c = context
+  final def initializeLayout = Views.initializeLayout
 
-  onCreate {
-    setContentView(R.layout.activity_discovering)
+  final def closeDrawerIfOpened = Views.closeDrawerIfOpened
 
-    setSupportActionBar(toolbar)
+  final def initializeMenu(menu: Menu) = for {
+    _ <- Views.initializeMenu(menu)
+  } yield ()
 
-    floatingActionButton.setOnClickListener(new Listeners.OnClickListener {
-      override def onClick(view: View) {
-        Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-          .setAction("Action", null)
-          .show()
-      }
-    })
+  final def handleDrawerOptions(item: MenuItem) = for {
+    _ <- Views.itemToDrawerOption(item)
+    _ <- Views.closeDrawerIfOpened
+  } yield ()
 
-    val toggle = new ActionBarDrawerToggle(
-      this,
-      layout,
-      toolbar,
-      R.string.navigation_drawer_open,
-      R.string.navigation_drawer_close
-    )
-    layout.setDrawerListener(toggle)
-    toggle.syncState()
-
-    navigationView.setNavigationItemSelectedListener(this)
-  }
-
-  onBackPressed {
-    if (layout.isDrawerOpen(GravityCompat.START)) {
-      layout.closeDrawer(GravityCompat.START)
+  final def handleMenuOptions(item: MenuItem) = for {
+    option <- Views.itemToMenuOption(item)
+    _ <- option match {
+      case MenuOptions.OpenSettings => moveToSettings
+      case MenuOptions.Logout       => logOutFromFacebook
     }
-  }
-
-  onCreateOptionsMenu { menu =>
-    getMenuInflater.inflate(R.menu.main, menu)
-    true
-  }
-
-  onOptionsItemSelected { item =>
-    item.getItemId match {
-      case R.id.action_settings =>
-        moveToSettings.fireAndForget()
-        true
-      case R.id.action_logout =>
-        logOutFromFacebook.fireAndForget()
-        true
-      case _ => false
-    }
-  }
-
-  onNavigationItemSelected { item =>
-    item.getItemId match {
-      case R.id.nav_camera    =>
-      case R.id.nav_gallery   =>
-      case R.id.nav_slideshow =>
-      case R.id.nav_manage    =>
-      case R.id.nav_share     =>
-      case R.id.nav_send      =>
-    }
-
-    layout.closeDrawer(GravityCompat.START)
-
-    true
-  }
+  } yield ()
 }
