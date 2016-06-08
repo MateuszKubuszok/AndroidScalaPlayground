@@ -14,16 +14,12 @@ trait Dependencies {
   // android
   val sdkPrefix = "com.android.support"
   val sdkVersion = "23.1.1"
-  val annotations = (sdkPrefix % "support-annotations" % sdkVersion).intransitive()
-  val appcompat = (sdkPrefix % "appcompat-v7" % sdkVersion)
-    .artifacts(Artifact("appcompat-v7", "aar", "aar"))
-    .intransitive()
-  val design = (sdkPrefix % "design" % sdkVersion).artifacts(Artifact("design", "aar", "aar")).intransitive()
-  val support = (sdkPrefix % "support-v4" % sdkVersion).artifacts(Artifact("support-v4", "aar", "aar")).intransitive()
-  val recyclerview = (sdkPrefix % "recyclerview-v7" % sdkVersion)
-    .artifacts(Artifact("recyclerview-v7", "aar", "aar"))
-    .intransitive()
-  val multidex = sdkPrefix % "multidex" % "1.0.1" artifacts Artifact("multidex", "aar", "aar") intransitive()
+  val annotations = sdkPrefix % "support-annotations" % sdkVersion
+  val appcompat = sdkPrefix % "appcompat-v7" % sdkVersion
+  val design = sdkPrefix % "design" % sdkVersion
+  val support = sdkPrefix % "support-v4" % sdkVersion
+  val recyclerview = sdkPrefix % "recyclerview-v7" % sdkVersion
+  val multidex = sdkPrefix % "multidex" % "1.0.1"
 
   // scala
   val scalaLib = "org.scala-lang" % "scala-library" % scalaVersionUsed
@@ -38,12 +34,11 @@ trait Dependencies {
   val shapeless = "com.chuusai" %% "shapeless" % "2.2.5"
 
   // datetime in slick
-  val joda = ("net.danlew" % "android.joda" % "2.9.1").artifacts(Artifact("android.joda", "aar", "aar"))
+  val joda = "net.danlew" % "android.joda" % "2.9.1"
   val jodaConvert = "org.joda" % "joda-convert" % "1.8.1"
 
   // facebook
-  val facebookSdk = ("com.facebook.android" % "facebook-android-sdk" % "4.8.2")
-    .artifacts(Artifact("facebook-android-sdk", "aar", "aar"))
+  val facebookSdk = "com.facebook.android" % "facebook-android-sdk" % "4.8.2"
 
   // testing
   val mockito    = "org.mockito" % "mockito-core" % "1.10.8"
