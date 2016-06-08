@@ -2,6 +2,8 @@
 
 addSbtPlugin("org.scala-android" % "sbt-android" % "1.6.3")
 
+addSbtPlugin("org.scala-android" % "sbt-android-protify" % "1.2.3")
+
 addSbtPlugin("org.scalariform" % "sbt-scalariform" % "1.5.1")
 
 addSbtPlugin("org.scalastyle" %% "scalastyle-sbt-plugin" % "0.7.0")

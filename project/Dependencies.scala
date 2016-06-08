@@ -83,11 +83,4 @@ object Dependencies extends Dependencies {
 
     def from(dir: String): Project = project in file(s"$commonDir/$dir")
   }
-
-  implicit class DependsOnLibraries(project: Project) {
-
-    def dependsOnLibraries(projects: ProjectReference*): Project = project
-      .settings(android.Plugin.buildWith(projects:_*):_*)
-      .dependsOn(projects map { x => x: ClasspathDep[ProjectReference] }:_*)
-  }
 }

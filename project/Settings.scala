@@ -1,5 +1,6 @@
 import android.Keys._
 import android.Plugin._
+import android.protify.Keys._
 import com.typesafe.sbt.SbtScalariform._
 import sbt.Defaults.testTasks
 import sbt.TestFrameworks.Specs2
@@ -23,7 +24,7 @@ trait Settings {
 
   private val disabledTestTag = TestTag.DisabledTest
 
-  private val modulesSettings = scalariformSettings ++ androidBuild ++ Seq(
+  private val modulesSettings = scalariformSettings ++ Seq(
     // package
     organization             := "com.talkie",
     version                  := "0.1.0-SNAPSHOT",
@@ -137,10 +138,13 @@ object Settings extends Settings {
 
   implicit class ModuleConfigurator(project: Project) {
 
-    def configureModule(asLibrary: Boolean = false, withViews: Boolean = false): Project = project
-      .settings(modulesSettings: _*)
-      .settings(libraryProject := asLibrary)
-      .settings(typedResources := withViews)
+    def configureModule(asLibrary: Boolean = false, withViews: Boolean = false)
+                       (deps : sbt.ProjectReference*): Project =
+      (if (deps.isEmpty) project.settings(androidBuild) else project.androidBuildWith(deps:_*))
+        .settings(libraryProject := asLibrary)
+        .settings(modulesSettings: _*)
+        .settings(typedResources := withViews)
+        .settings((if (!asLibrary && withViews) protifySettings else Seq.empty): _*)
   }
 
   implicit class FunctionalTestConfigurator(project: Project)
