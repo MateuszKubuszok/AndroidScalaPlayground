@@ -27,17 +27,22 @@
         <category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
     </activity>
+
     <activity
         android:name=".app.activities.discovering.DiscoveringActivity"
-        android:label="@string/app_name" />
+        android:label="@string/app_name"
+        android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
     <activity
         android:name=".app.activities.settings.SettingsActivity"
         android:label="@string/app_name" />
+
     <activity
         android:name="com.facebook.FacebookActivity"
         android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
         android:label="@string/app_name"
         android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
   </application>
 
 </manifest>

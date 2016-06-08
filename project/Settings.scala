@@ -26,10 +26,10 @@ trait Settings {
 
   private val modulesSettings = scalariformSettings ++ Seq(
     // package
-    organization             := "com.talkie",
-    version                  := "0.1.0-SNAPSHOT",
-    versionCode   in Android := Some(1),
-    versionName   in Android := Some("0.1.0-SNAPSHOT"),
+    organization           := "com.talkie",
+    version                := "0.1.0-SNAPSHOT",
+    versionCode in Android := Some(1),
+    versionName in Android := Some("0.1.0-SNAPSHOT"),
 
     // resolvers
     resolvers ++= commonResolvers,
@@ -54,7 +54,7 @@ trait Settings {
       "-Ywarn-dead-code",
       "-Ywarn-infer-any",
       "-Ywarn-unused-import",
-      //"-Xfatal-warnings",  // TR.scala generates deprecations :(
+      "-Xfatal-warnings",
       "-Xlint"
     ),
 
