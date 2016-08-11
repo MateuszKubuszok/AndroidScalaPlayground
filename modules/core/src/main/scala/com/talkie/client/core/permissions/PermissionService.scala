@@ -1,27 +1,22 @@
 package com.talkie.client.core.permissions
 
-import com.talkie.client.common.services.{ Service => GenericService }
 import com.talkie.client.core.permissions.RequiredPermissions.RequiredPermission
 
-import scalaz.Free
+import scalaz.{ :<:, Free }
 
-sealed trait PermissionService[R] extends GenericService[R]
-final case class CheckPermissions(permissions: RequiredPermission*) extends PermissionService[PermissionStatusMap]
-final case class RequestPermissions(permissions: RequiredPermission*)
-  extends PermissionService[(PermissionStatusMap, Int)]
-final case class RequirePermissions(permissions: RequiredPermission*) extends PermissionService[PermissionStatusMap]
+sealed trait PermissionService[R]
 
-trait PermissionServiceFrees[S[R] >: PermissionService[R]] {
+object PermissionService {
 
-  def checkPermissions(permissions: RequiredPermission*): Free[S, PermissionStatusMap] =
-    Free.liftF(CheckPermissions(permissions: _*): S[PermissionStatusMap])
+  final case class CheckPermissions(permissions: RequiredPermission*) extends PermissionService[PermissionStatusMap]
+  final case class RequirePermissions(permissions: RequiredPermission*) extends PermissionService[PermissionStatusMap]
 
-  def requestPermissions(permissions: RequiredPermission*): Free[S, (PermissionStatusMap, Int)] =
-    Free.liftF(RequestPermissions(permissions: _*): S[(PermissionStatusMap, Int)])
+  class Ops[S[_]](implicit s0: PermissionService :<: S) {
 
-  def requirePermissions(permissions: RequiredPermission*): Free[S, PermissionStatusMap] =
-    Free.liftF(RequirePermissions(permissions: _*): S[PermissionStatusMap])
+    def checkPermissions(permissions: RequiredPermission*): Free[S, PermissionStatusMap] =
+      Free.liftF(s0.inj(CheckPermissions(permissions: _*)))
+
+    def requirePermissions(permissions: RequiredPermission*): Free[S, PermissionStatusMap] =
+      Free.liftF(s0.inj(RequirePermissions(permissions: _*)))
+  }
 }
-
-object PermissionService extends PermissionServiceFrees[PermissionService]
-object Service extends PermissionServiceFrees[GenericService]

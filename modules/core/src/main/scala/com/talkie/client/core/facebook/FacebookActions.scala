@@ -6,15 +6,22 @@ import com.facebook.login.widget.LoginButton
 import com.facebook.login.{ LoginResult, LoginManager }
 import com.talkie.client.common.components.Activity
 import com.talkie.client.common.context.Context
-import com.talkie.client.core.events.EventService._
-import com.talkie.client.core.events.EventServiceInterpreter
-import com.talkie.client.core.events.EventServiceInterpreter._
+import com.talkie.client.core.events.EventActions
 
-private[facebook] final class FacebookActions(
-    context:              Context,
-    activity:             Activity,
-    implicit val eventSI: EventServiceInterpreter
-) {
+trait FacebookActions {
+
+  def checkIfLogged(): Boolean
+
+  def configureLogin(requstor: Activity, loginButtonOpt: () => Option[LoginButton]): Unit
+
+  def logout(): Unit
+}
+
+final class FacebookActionsImpl(
+    implicit
+    context:      Context,
+    eventActions: EventActions
+) extends FacebookActions {
 
   private val logger = context loggerFor this
 
@@ -35,7 +42,7 @@ private[facebook] final class FacebookActions(
     override def onCurrentAccessTokenChanged(oldAccessToken: AccessToken, currentAccessToken: AccessToken) = {
       logger trace s"Access token changed ($oldAccessToken) => ($currentAccessToken)"
       (Option(oldAccessToken), Option(currentAccessToken)) match {
-        case (Some(_), Some(_)) => notifyEventListeners(TokenUpdated()).fireAndForget()
+        case (Some(_), Some(_)) => eventActions.notifyEventListeners(TokenUpdated())
         case (Some(_), None)    => // logged out, notified by LoginResultCallback
         case _                  => // logged in, notified by LoginResultCallback
       }
@@ -46,17 +53,17 @@ private[facebook] final class FacebookActions(
 
     override def onSuccess(result: LoginResult) = {
       logger info s"Logged in"
-      notifyEventListeners(LoginSucceeded(result)).fireAndForget()
+      eventActions.notifyEventListeners(LoginSucceeded(result))
     }
 
     override def onCancel() = {
       logger info "Login cancelled"
-      notifyEventListeners(LoginCancelled()).fireAndForget()
+      eventActions.notifyEventListeners(LoginCancelled())
     }
 
     override def onError(error: FacebookException) = {
       logger error ("Login failed", error)
-      notifyEventListeners(LoginFailed(error)).fireAndForget()
+      eventActions.notifyEventListeners(LoginFailed(error))
     }
   }
 
@@ -66,12 +73,12 @@ private[facebook] final class FacebookActions(
     Option(Profile.getCurrentProfile).isDefined
   }
 
-  def configureLogin(loginButtonOpt: () => Option[LoginButton]): Unit = {
+  def configureLogin(requstor: Activity, loginButtonOpt: () => Option[LoginButton]): Unit = {
     ensureInitialized()
     logger trace "Requested activity and loginButton configuration"
     val tracker = new TokenUpdateTracker
 
-    activity.bootstrap {
+    requstor.bootstrap {
       tracker.startTracking()
       loginButtonOpt().foreach { loginButton =>
         loginButton.setReadPermissions(permissions: _*)
@@ -81,12 +88,12 @@ private[facebook] final class FacebookActions(
       logger trace "Started tracing AccessTokens"
     }
 
-    activity.teardown {
+    requstor.teardown {
       tracker.stopTracking()
       logger trace "Stopped tracing AccessTokens"
     }
 
-    activity.onActivityResult { (requestCode: Int, resultCode: Int, data: Intent) =>
+    requstor.onActivityResult { (requestCode: Int, resultCode: Int, data: Intent) =>
       callBackManager.onActivityResult(requestCode, resultCode, data)
     }
   }
@@ -95,6 +102,6 @@ private[facebook] final class FacebookActions(
     ensureInitialized()
     logger debug "Requested logout"
     loginManager.logOut()
-    notifyEventListeners(LoggedOut()).fireAndForget()
+    eventActions.notifyEventListeners(LoggedOut())
   }
 }

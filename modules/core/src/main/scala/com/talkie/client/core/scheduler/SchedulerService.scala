@@ -1,33 +1,23 @@
 package com.talkie.client.core.scheduler
 
-import com.talkie.client.common.scheduler.Job
-import com.talkie.client.common.services.{ Service => GenericService }
+import android.app.job.JobInfo
+import com.talkie.client.common.scheduler.JobId
 
-import scala.concurrent.duration.Duration
-import scalaz.Free
+import scalaz.{ :<:, Free }
 
-sealed trait SchedulerService[R] extends GenericService[R]
-final case class ScheduleSingleJob(job: Job, delay: Duration) extends SchedulerService[Boolean]
-final case class ScheduleIntervalJob(job: Job, initialDelay: Duration, delay: Duration)
-  extends SchedulerService[Boolean]
-final case class SchedulePeriodicJob(job: Job, initialDelay: Duration, period: Duration)
-  extends SchedulerService[Boolean]
-final case class CancelJob(job: Job, canInterrupt: Boolean) extends SchedulerService[Boolean]
+sealed trait SchedulerService[R]
 
-trait SchedulerServiceFrees[S[R] >: SchedulerService[R]] {
+object SchedulerService {
 
-  def scheduleSingleJob(job: Job, delay: Duration): Free[S, Boolean] =
-    Free.liftF(ScheduleSingleJob(job, delay): S[Boolean])
+  final case class ScheduleJob(jobInfo: JobInfo) extends SchedulerService[Option[JobId]]
+  final case class CancelJob(jobId: JobId) extends SchedulerService[Unit]
 
-  def scheduleIntervalJob(job: Job, initialDelay: Duration, delay: Duration): Free[S, Boolean] =
-    Free.liftF(ScheduleIntervalJob(job, initialDelay, delay): S[Boolean])
+  class Ops[S[_]](implicit s0: SchedulerService :<: S) {
 
-  def schedulePeriodicJob(job: Job, initialDelay: Duration, period: Duration): Free[S, Boolean] =
-    Free.liftF(SchedulePeriodicJob(job, initialDelay, period): S[Boolean])
+    def scheduleJob(jobInfo: JobInfo): Free[S, Option[JobId]] =
+      Free.liftF(s0.inj(ScheduleJob(jobInfo)))
 
-  def cancelJob(job: Job, canInterrupt: Boolean): Free[S, Boolean] =
-    Free.liftF(CancelJob(job, canInterrupt): S[Boolean])
+    def cancelJob(jobId: JobId): Free[S, Unit] =
+      Free.liftF(s0.inj(CancelJob(jobId)))
+  }
 }
-
-object SchedulerService extends SchedulerServiceFrees[SchedulerService]
-object Service extends SchedulerServiceFrees[GenericService]

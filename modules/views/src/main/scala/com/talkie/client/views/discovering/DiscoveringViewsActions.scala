@@ -11,12 +11,28 @@ import com.talkie.client.views.common.Listeners
 import com.talkie.client.views.discovering.DrawerOptions.DrawerOption
 import com.talkie.client.views.discovering.MenuOptions.MenuOption
 
-private[discovering] final class DiscoveringViewsActions(
+trait DiscoveringViewsActions {
+
+  def initializeLayout(): Unit
+
+  def initializeMenu(menu: Menu): Unit
+
+  def closeDrawerIfOpened(): Unit
+
+  def itemToDrawerOption(item: MenuItem): DrawerOption
+
+  def itemToMenuOption(item: MenuItem): MenuOption
+}
+
+final class DiscoveringViewsActionsImpl(
+    implicit
     context:  Context,
     activity: AppCompatActivity with Activity,
     views:    DiscoveringViews,
     listener: OnNavigationItemSelectedListener
-) {
+) extends DiscoveringViewsActions {
+
+  private val logger = context.loggerFor(this)
 
   def initializeLayout(): Unit = {
     activity.setContentView(R.layout.activity_discovering)
@@ -45,7 +61,7 @@ private[discovering] final class DiscoveringViewsActions(
   }
 
   def initializeMenu(menu: Menu): Unit = {
-    context.loggerFor(this).error("initialize fucking menu")
+    logger error "initialize fucking menu"
     activity.getMenuInflater.inflate(R.menu.main, menu)
   }
 

@@ -5,11 +5,19 @@ import com.talkie.client.common.components.Activity
 import com.talkie.client.common.context.Context
 import com.talkie.client.views.R
 
-private[login] final class LoginViewsActions(
+trait LoginViewsActions {
+
+  def initializeLayout(): Unit
+
+  def getLoginButton: Option[LoginButton]
+}
+
+final class LoginViewsActionsImpl(
+    implicit
     context:  Context,
     activity: Activity,
     views:    LoginViews
-) {
+) extends LoginViewsActions {
 
   def initializeLayout(): Unit = activity.setContentView(R.layout.activity_login)
 

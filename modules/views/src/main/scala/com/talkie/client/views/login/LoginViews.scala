@@ -6,13 +6,14 @@ import com.talkie.client.common.components.Activity
 import com.talkie.client.views.common.views.TypedFindLayout
 import com.talkie.client.views.{ TR, TypedFindView }
 
-private[login] trait LoginViews {
+trait LoginViews {
 
   def loginButton: LoginButton
   def layout: RelativeLayout
 }
 
-private[login] final class LoginViewsImpl(
+final class LoginViewsImpl(
+    implicit
     activity: Activity
 ) extends LoginViews with TypedFindView with TypedFindLayout {
 

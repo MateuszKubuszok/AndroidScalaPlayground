@@ -1,10 +1,14 @@
 package com.talkie.client.common.components
 
 import android.content.Intent
+import com.talkie.client.common.context.ContextImpl
 
 import scala.collection.mutable
 
 trait Service extends android.app.Service {
+
+  protected implicit val context = ContextImpl(this)
+  protected val logger = context.loggerFor(this)
 
   // lifecycle callbacks
 

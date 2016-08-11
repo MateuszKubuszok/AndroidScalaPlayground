@@ -1,3 +1,3 @@
 package com.talkie.client.common.scheduler
 
-trait Job extends Runnable
+case class JobId(jobId: Int) extends AnyVal

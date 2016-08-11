@@ -1,26 +1,28 @@
 package com.talkie.client.core.facebook
 
 import com.facebook.login.widget.LoginButton
-import com.talkie.client.common.services.{ Service => GenericService }
+import com.talkie.client.common.components.Activity
 
-import scalaz.Free
+import scalaz.{ :<:, Free }
 
-sealed trait FacebookService[R] extends GenericService[R]
-case object CheckIfLoggedToFacebook extends FacebookService[Boolean]
-final case class ConfigureLogin(loginButtonOpt: () => Option[LoginButton]) extends FacebookService[Unit]
-case object LogOutFromFacebook extends FacebookService[Unit]
+sealed trait FacebookService[R]
 
-trait FacebookServiceFrees[S[R] >: FacebookService[R]] {
+object FacebookService {
 
-  def checkIfLoggedToFacebook: Free[S, Boolean] =
-    Free.liftF(CheckIfLoggedToFacebook: S[Boolean])
+  case object CheckIfLoggedToFacebook extends FacebookService[Boolean]
+  final case class ConfigureLogin(requestor: Activity, loginButtonOpt: () => Option[LoginButton]) extends FacebookService[Unit]
+  case object LogOutFromFacebook extends FacebookService[Unit]
 
-  def configureLogin(loginButtonOpt: () => Option[LoginButton]): Free[S, Unit] =
-    Free.liftF(ConfigureLogin(loginButtonOpt): S[Unit])
+  class Ops[S[_]](implicit s0: FacebookService :<: S) {
 
-  def logOutFromFacebook: Free[S, Unit] =
-    Free.liftF(LogOutFromFacebook: S[Unit])
+    def checkIfLoggedToFacebook: Free[S, Boolean] =
+      Free.liftF(s0.inj(CheckIfLoggedToFacebook))
+
+    def configureLogin(requestor: Activity, loginButtonOpt: () => Option[LoginButton]): Free[S, Unit] =
+      Free.liftF(s0.inj(ConfigureLogin(requestor, loginButtonOpt)))
+
+    def logOutFromFacebook: Free[S, Unit] =
+      Free.liftF(s0.inj(LogOutFromFacebook))
+  }
 }
 
-object FacebookService extends FacebookServiceFrees[FacebookService]
-object Service extends FacebookServiceFrees[GenericService]

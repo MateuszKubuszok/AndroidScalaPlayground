@@ -1,30 +1,20 @@
 package com.talkie.client.domain.tracking
 
-import android.location.Location
-import com.talkie.client.common.services.{ Service => GenericService }
+import scalaz.{ :<:, Free }
 
-import scalaz.Free
+sealed trait TrackingService[R]
 
-sealed trait TrackingService[R] extends GenericService[R]
-case object ConfigureTracking extends TrackingService[Unit]
-case object CheckLastLocation extends TrackingService[Option[Location]]
-case object TurnOnLocationTracking extends TrackingService[Boolean]
-case object TurnOffLocationTracking extends TrackingService[Boolean]
+object TrackingService {
 
-trait TrackingServiceFrees[S[R] >: TrackingService[R]] {
+  case object StartTrackingJobs extends TrackingService[Unit]
+  case object StopTrackingJobs extends TrackingService[Unit]
 
-  def configureTracking: Free[S, Unit] =
-    Free.liftF(ConfigureTracking: S[Unit])
+  class Ops[S[_]](implicit s0: TrackingService :<: S) {
 
-  def checkLastLocationJob: Free[S, Option[Location]] =
-    Free.liftF(CheckLastLocation: S[Option[Location]])
+    def startTrackingJobs: Free[S, Unit] =
+      Free.liftF(s0.inj(StartTrackingJobs))
 
-  def turnOnLocationTrackingJob: Free[S, Boolean] =
-    Free.liftF(TurnOnLocationTracking: S[Boolean])
-
-  def turnOffLocationTrackingJob: Free[S, Boolean] =
-    Free.liftF(TurnOffLocationTracking: S[Boolean])
+    def stopTrackingJobs: Free[S, Unit] =
+      Free.liftF(s0.inj(StopTrackingJobs))
+  }
 }
-
-object TrackingService extends TrackingServiceFrees[TrackingService]
-object Service extends TrackingServiceFrees[GenericService]

@@ -4,16 +4,24 @@ import android.content.Context._
 import android.location.{ LocationListener => Listener, LocationManager => Manager, _ }
 import com.talkie.client.common.context.Context
 import com.talkie.client.core.location.LocationProviders.{ LocationProvider => Provider }
-import com.talkie.client.core.permissions.{ PermissionServiceInterpreter, RequiredPermissions }
-import com.talkie.client.core.permissions.PermissionService._
-import com.talkie.client.core.permissions.PermissionServiceInterpreter._
+import com.talkie.client.core.permissions.{ PermissionActions, RequiredPermissions }
 
 import scala.concurrent.duration._
 
-private[location] final class LocationActions(
-    context:                                   Context,
-    implicit val permissionServiceInterpreter: PermissionServiceInterpreter
-) {
+trait LocationActions {
+
+  def checkLastKnownLocation(): Option[Location]
+
+  def registerLocationListener(listener: Listener, providers: Provider*): Boolean
+
+  def removeLocationListener(listener: Listener): Boolean
+}
+
+final class LocationActionsImpl(
+    implicit
+    context:           Context,
+    permissionActions: PermissionActions
+) extends LocationActions {
 
   private val logger = context.loggerFor(this)
 
@@ -37,24 +45,21 @@ private[location] final class LocationActions(
 
   private val requiredPermission = RequiredPermissions.AccessFineLocation
 
-  def withPermission[T](action: => T) = requirePermissions(requiredPermission)
-    .interpret
+  private def withPermission[T](action: => T) = permissionActions
+    .requirePermissions(requiredPermission)
     .ensuringPermissions(requiredPermission) {
       action
     }
 
-  def lastKnownLocation(provider: Provider): Option[Location] = {
-    logger trace s"Requested last known location using: $provider for fallback"
+  def checkLastKnownLocation(): Option[Location] = withPermission {
+    logger trace s"Requested last known location fallback"
 
-    // TODO: this logic makes no sense...
     val locationOpt = Option {
       manager.getBestProvider(enabledProviderCriteria, true)
     } orElse Option {
       manager.getBestProvider(disabledProviderCriteria, false)
-    } orElse Option {
-      provider
-    } flatMap { _ =>
-      Option(manager.getLastKnownLocation(provider.toString))
+    } flatMap { provider =>
+      Option(manager.getLastKnownLocation(provider))
     }
 
     logger trace s"Last known location resolved to: $locationOpt"
@@ -62,12 +67,13 @@ private[location] final class LocationActions(
     locationOpt
   }
 
-  def registerLocationListener(listener: Listener, providers: Provider*): Boolean =
+  def registerLocationListener(listener: Listener, providers: Provider*): Boolean = withPermission {
     providers.forall { provider =>
       logger trace s"Registering LocationListener on: $provider"
       manager.requestLocationUpdates(provider.toString, minTimeMs, minDistanceM, listener)
       manager.isProviderEnabled(provider.toString)
     }
+  }
 
   def removeLocationListener(listener: Listener): Boolean = {
     logger trace "Requested LocationListener removal"

@@ -8,7 +8,8 @@ trait Dependencies {
   val commonResolvers = Seq(
     Resolver sonatypeRepo "public",
     Resolver typesafeRepo "releases",
-    "https://jcenter.bintray.com/" at "https://jcenter.bintray.com/"
+    "https://jcenter.bintray.com/" at "https://jcenter.bintray.com/",
+    "https://jitpack.io" at "https://jitpack.io"
   )
 
   // android
@@ -25,6 +26,16 @@ trait Dependencies {
   val scalaLib = "org.scala-lang" % "scala-library" % scalaVersionUsed
   val scalazCore = "org.scalaz" %% "scalaz-core" % "7.2.1"
   val scalazConcurrent = "org.scalaz" %% "scalaz-concurrent" % "7.2.1"
+
+  // permission requests in services
+  val permissionEverywhere = "com.github.kaknazaveshtakipishi" % "PermissionEverywhere" % "1.0.2"
+
+  // serialization
+  val playJson = "com.typesafe.play" %% "play-json" % "2.4-2014-08-19-5fd9847" excludeAll(
+    ExclusionRule(organization = "org.joda"),
+    ExclusionRule(organization = "joda-time"),
+    ExclusionRule(organization = "org.spec2")
+  )
 
   // sql
   val sqlDroid = "org.sqldroid" % "sqldroid" % "1.0.3"
@@ -50,6 +61,8 @@ trait Dependencies {
   val mainDeps = scalaLib :: List(
     scalazCore,
     scalazConcurrent,
+    permissionEverywhere,
+    playJson,
     sqlDroid,
     slick,
     shapeless,

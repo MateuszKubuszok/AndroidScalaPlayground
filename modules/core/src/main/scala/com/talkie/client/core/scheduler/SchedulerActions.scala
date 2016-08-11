@@ -1,67 +1,42 @@
 package com.talkie.client.core.scheduler
 
-import java.util.concurrent.TimeUnit._
+import android.app.job.{ JobInfo, JobScheduler }
+import android.content.Context._
+import com.talkie.client.common.context.Context
+import com.talkie.client.common.scheduler.JobId
 
-import com.talkie.client.common.context.{ SharedState, Context }
-import com.talkie.client.common.scheduler.Job
+trait SchedulerActions {
 
-import scala.concurrent.duration.Duration
+  def scheduleJob(jobInfo: JobInfo): Option[JobId]
 
-private[scheduler] final class SchedulerActions(context: Context) {
+  def cancelJob(jobId: JobId): Unit
+}
+
+final class SchedulerActionsImpl(implicit context: Context) extends SchedulerActions {
 
   private val logger = context.loggerFor(this)
-  private val executor = context.schedulerExecutor
 
-  def scheduleSingleJob(job: Job, delay: Duration): Boolean =
-    context.withSharedStateUpdated { state =>
-      val future = executor.schedule(CleanJobOnceFinished(job), delay.toMillis, MILLISECONDS) // TODO :(
-      val newState = state.copy(scheduledJobs = state.scheduledJobs + (job -> future))
-      val updated = state.scheduledJobs.size != newState.scheduledJobs.size
-      logger trace s"Single job scheduled?: $job -> $updated"
-      newState -> updated
-    }
+  private lazy val scheduler = context.androidContext.getSystemService(JOB_SCHEDULER_SERVICE).asInstanceOf[JobScheduler]
 
-  def scheduleIntervalJob(job: Job, initialDelay: Duration, delay: Duration): Boolean =
+  def scheduleJob(jobInfo: JobInfo): Option[JobId] =
     context.withSharedStateUpdated { state =>
-      val future = executor.scheduleWithFixedDelay(job, initialDelay.toMillis, delay.toMillis, MILLISECONDS) // TODO :(
-      val newState = state.copy(scheduledJobs = state.scheduledJobs + (job -> future))
-      val updated = state.scheduledJobs.size != newState.scheduledJobs.size
-      logger trace s"Single job scheduled?: $job -> $updated"
-      newState -> updated
-    }
-
-  def schedulePeriodicJob(job: Job, initialDelay: Duration, period: Duration): Boolean =
-    context.withSharedStateUpdated { state =>
-      val future = executor.scheduleAtFixedRate(job, initialDelay.toMillis, period.toMillis, MILLISECONDS)
-      val newState = state.copy(scheduledJobs = state.scheduledJobs + (job -> future))
-      val updated = state.scheduledJobs.size != newState.scheduledJobs.size
-      logger trace s"Single job scheduled?: $job -> $updated"
-      newState -> updated
-    }
-
-  def cancelJob(job: Job, canInterrupt: Boolean): Boolean =
-    context.withSharedStateUpdated { state =>
-      val result = for {
-        future <- state.scheduledJobs.get(job)
-      } yield {
-        future.cancel(canInterrupt)
-        if (future.isCancelled) state.copy(scheduledJobs = state.scheduledJobs - job)
-        else state
+      val (newState, updated) = scheduler.schedule(jobInfo) match {
+        case jobId if jobId > 0 =>
+          val job = JobId(jobId)
+          state.copy(scheduledJobs = state.scheduledJobs + job) -> Some(job)
+        case _ =>
+          state -> None
       }
-      val newState = result getOrElse state
-      val updated = state.scheduledJobs.size != newState.scheduledJobs.size
-      logger trace s"Job cancelled?: $job -> $updated"
+      logger trace s"Job scheduled?: $jobInfo -> $updated"
       newState -> updated
     }
 
-  case class CleanJobOnceFinished(job: Job) extends Job {
-
-    override def run(): Unit = try {
-      job.run()
-    } finally {
-      context.withSharedStateUpdated { state: SharedState =>
-        (state.copy(scheduledJobs = state.scheduledJobs - job), ())
-      }
+  def cancelJob(jobId: JobId): Unit =
+    context.withSharedStateUpdated { state =>
+      scheduler.cancel(jobId.jobId)
+      val newState = state.copy(scheduledJobs = state.scheduledJobs - jobId)
+      val updated = state.scheduledJobs.size != newState.scheduledJobs.size
+      logger trace s"Job cancelled?: $jobId -> $updated"
+      newState -> updated
     }
-  }
 }

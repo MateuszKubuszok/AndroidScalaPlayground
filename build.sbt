@@ -25,6 +25,3 @@ lazy val app = project.from("app")
   .setName("client.app")
   .setDescription("Talkie application")
   .configureModule(withViews = true)(domain, views)
-
-lazy val root = (project in file("."))
-  .aggregate(common, core, domain, views, app)

@@ -1,22 +1,22 @@
 package com.talkie.client.views.login
 
 import com.facebook.login.widget.LoginButton
-import com.talkie.client.common.services.{ Service => GenericService }
 
-import scalaz.Free
+import scalaz.{ :<:, Free }
 
-sealed trait LoginViewsService[R] extends GenericService[R]
-case object InitializeLayout extends LoginViewsService[Unit]
-case object GetLoginButton extends LoginViewsService[Option[LoginButton]]
+sealed trait LoginViewsService[R]
 
-trait LoginViewsServiceFrees[S[R] >: LoginViewsService[R]] {
+object LoginViewsService {
 
-  def initializeLayout: Free[S, Unit] =
-    Free.liftF(InitializeLayout: S[Unit])
+  case object InitializeLayout extends LoginViewsService[Unit]
+  case object GetLoginButton extends LoginViewsService[Option[LoginButton]]
 
-  def getLoginButton: Free[S, Option[LoginButton]] =
-    Free.liftF(GetLoginButton: S[Option[LoginButton]])
+  class Ops[S[_]](implicit s0: LoginViewsService :<: S) {
+
+    def initializeLayout: Free[S, Unit] =
+      Free.liftF(s0.inj(InitializeLayout))
+
+    def getLoginButton: Free[S, Option[LoginButton]] =
+      Free.liftF(s0.inj(GetLoginButton))
+  }
 }
-
-object LoginViewsService extends LoginViewsServiceFrees[LoginViewsService]
-object Service extends LoginViewsServiceFrees[GenericService]

@@ -1,124 +1,58 @@
 package com.talkie.client.domain.tracking
 
-import android.location.{ Location, LocationListener }
-import android.os.Bundle
-import com.talkie.client.common.components.Activity
+import android.app.job.JobInfo.Builder
+import android.content.ComponentName
+
 import com.talkie.client.common.context.Context
-import com.talkie.client.common.scheduler.Job
-import com.talkie.client.common.services.ServiceInterpreter
-import com.talkie.client.core.events.EventService._
-import com.talkie.client.core.events.EventServiceInterpreter
-import com.talkie.client.core.location.LocationService._
-import com.talkie.client.core.location.{ LocationProviders, LocationProviderStatuses, LocationServiceInterpreter }
-import com.talkie.client.core.scheduler.SchedulerService._
-import com.talkie.client.core.scheduler.SchedulerServiceInterpreter
+import com.talkie.client.common.scheduler.JobId
+import com.talkie.client.core.scheduler.SchedulerActions
 
 import scala.concurrent.duration._
-import scalaz.concurrent.Task
 
-private[tracking] final class TrackingActions(
-    context:                  Context,
-    requestor:                Activity,
-    implicit val eventSI:     EventServiceInterpreter,
-    implicit val locationSI:  LocationServiceInterpreter,
-    implicit val schedulerSI: SchedulerServiceInterpreter
-) {
+trait TrackingActions {
+
+  def startTrackingJobs(): Unit
+
+  def stopTrackingJobs(): Unit
+}
+
+final class TrackingActionsImpl(
+    implicit
+    context:          Context,
+    schedulerActions: SchedulerActions
+) extends TrackingActions {
 
   private val logger = context.loggerFor(this)
 
-  private val providers = LocationProviders.values.toSeq // replace with settings
+  private val checkLastKnownLocationId = 12300066 // TODO: resources
+  private val checkLastKnownLocationCN = new ComponentName(context.androidContext, classOf[CheckLastKnownLocationJob])
+  private val checkLastKnownLocationInfo = new Builder(checkLastKnownLocationId, checkLastKnownLocationCN)
+    .setPeriodic(1.minute.toMillis)
+    .build()
 
-  def configureTracking(): Task[Unit] = Task {
-    import ServiceInterpreter.TaskRunner
-    import SchedulerServiceInterpreter._
+  private val turnOnTrackingId = 12300067 // TODO: resources
+  private val turnOnTrackingCN = new ComponentName(context.androidContext, classOf[TurnOnLocationTrackingJob])
+  private val turnOnTrackingInfo = new Builder(turnOnTrackingId, turnOnTrackingCN)
+    .setPeriodic(1.minute.toMillis)
+    .build()
 
-    requestor.bootstrap {
-      (for {
-        _ <- turnOnLocationTracking()
-        _ <- turnOffLocationTracking()
-        _ <- checkLastLocation()
-      } yield ()).fireAndWait()
-    }
+  private val turnOffTrackingId = 12300068 // TODO: resources
+  private val turnOffTrackingCN = new ComponentName(context.androidContext, classOf[TurnOffLocationTrackingJob])
+  private val turnOffTrackingInfo = new Builder(turnOffTrackingId, turnOffTrackingCN)
+    .setPeriodic(2.minute.toMillis)
+    .build()
 
-    requestor.teardown {
-      (for {
-        _ <- cancelJob(TurnOnLocationTrackingJob, canInterrupt = true)
-        _ <- cancelJob(TurnOffLocationTrackingJob, canInterrupt = false)
-        _ <- cancelJob(CheckLastKnownLocationJob, canInterrupt = true)
-      } yield ()).fireAndWait()
-    }
+  def startTrackingJobs(): Unit = {
+    logger trace "Start tracking jobs"
+    schedulerActions.scheduleJob(turnOnTrackingInfo)
+    schedulerActions.scheduleJob(turnOffTrackingInfo)
+    schedulerActions.scheduleJob(checkLastKnownLocationInfo)
   }
 
-  def checkLastLocation(): Task[Job] = {
-    import SchedulerServiceInterpreter._
-
-    (for {
-      isSuccess <- schedulePeriodicJob(CheckLastKnownLocationJob, 90 seconds, 1 minute)
-    } yield CheckLastKnownLocationJob).interpret
-  }
-
-  def turnOnLocationTracking(): Task[Job] = {
-    import SchedulerServiceInterpreter._
-
-    (for {
-      isSuccess <- schedulePeriodicJob(TurnOnLocationTrackingJob, Duration.Zero, 2 minutes)
-    } yield TurnOnLocationTrackingJob).interpret
-  }
-
-  def turnOffLocationTracking(): Task[Job] = {
-    import SchedulerServiceInterpreter._
-
-    (for {
-      isSuccess <- schedulePeriodicJob(TurnOffLocationTrackingJob, 1 minute, 2 minutes)
-    } yield TurnOffLocationTrackingJob).interpret
-  }
-
-  private object LocationEventNotifier extends LocationListener {
-
-    import EventServiceInterpreter._
-
-    override def onProviderEnabled(provider: String) =
-      notifyEventListeners(ProviderEnabled(provider)).fireAndForget()
-
-    override def onProviderDisabled(provider: String) =
-      notifyEventListeners(ProviderDisabled(provider)).fireAndForget()
-
-    override def onStatusChanged(provider: String, status: Int, extras: Bundle) =
-      notifyEventListeners(
-        ProviderStatusChangedEvent(
-          provider,
-          LocationProviderStatuses.values.find(_.id == status) getOrElse LocationProviderStatuses.UnknownStatus
-        )
-      ).fireAndForget()
-
-    override def onLocationChanged(location: Location) =
-      notifyEventListeners(LocationChangedEvent(location)).fireAndForget()
-  }
-
-  private object TurnOnLocationTrackingJob extends Job {
-
-    import LocationServiceInterpreter._
-
-    override def run() = registerLocationListener(LocationEventNotifier, providers: _*).fireAndForget()
-  }
-
-  private object TurnOffLocationTrackingJob extends Job {
-
-    import LocationServiceInterpreter._
-
-    override def run() = removeLocationListener(LocationEventNotifier).fireAndForget()
-  }
-
-  private object CheckLastKnownLocationJob extends Job {
-
-    import LocationServiceInterpreter._
-
-    override def run() =
-      (for {
-        locationOpt <- checkLastKnownLocation(providers: _*)
-      } yield {
-        logger info s"Last known location $locationOpt"
-        // force data update as LocationListener seems to be rather lazy
-      }).fireAndForget()
+  def stopTrackingJobs(): Unit = {
+    logger trace "Stop tracking jobs"
+    schedulerActions.cancelJob(JobId(turnOnTrackingId))
+    schedulerActions.cancelJob(JobId(turnOffTrackingId))
+    schedulerActions.cancelJob(JobId(checkLastKnownLocationId))
   }
 }

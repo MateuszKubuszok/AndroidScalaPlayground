@@ -6,7 +6,7 @@ import android.support.v7.widget.Toolbar
 import com.talkie.client.common.components.Activity
 import com.talkie.client.views.{ TR, TypedFindView }
 
-private[discovering] trait DiscoveringViews {
+trait DiscoveringViews {
 
   def layout: DrawerLayout
   def floatingActionButton: FloatingActionButton
@@ -14,7 +14,7 @@ private[discovering] trait DiscoveringViews {
   def toolbar: Toolbar
 }
 
-private[discovering] final class DiscoveringViewsImpl(activity: Activity) extends DiscoveringViews with TypedFindView {
+final class DiscoveringViewsImpl(implicit activity: Activity) extends DiscoveringViews with TypedFindView {
 
   override protected def findViewById(id: Int) = activity.findViewById(id)
   override lazy val layout = findView(TR.drawer_layout)

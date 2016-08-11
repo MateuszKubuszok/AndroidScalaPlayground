@@ -1,36 +1,36 @@
 package com.talkie.client.views.discovering
 
 import android.view.{ Menu, MenuItem }
-import com.talkie.client.common.services.{ Service => GenericService }
 import com.talkie.client.views.discovering.DrawerOptions.DrawerOption
 import com.talkie.client.views.discovering.MenuOptions.MenuOption
 
-import scalaz.Free
+import scalaz.{ :<:, Free }
 
-sealed trait DiscoveringViewsService[R] extends GenericService[R]
-case object InitializeLayout extends DiscoveringViewsService[Unit]
-case class InitializeMenu(menu: Menu) extends DiscoveringViewsService[Unit]
-case object CloseDrawerIfOpened extends DiscoveringViewsService[Unit]
-case class ItemToDrawerOption(item: MenuItem) extends DiscoveringViewsService[DrawerOption]
-case class ItemToMenuOption(item: MenuItem) extends DiscoveringViewsService[MenuOption]
+sealed trait DiscoveringViewsService[R]
 
-trait DiscoveringViewsServiceFrees[S[R] >: DiscoveringViewsService[R]] {
+object DiscoveringViewsService {
 
-  def initializeLayout: Free[S, Unit] =
-    Free.liftF(InitializeLayout: S[Unit])
+  case object InitializeLayout extends DiscoveringViewsService[Unit]
+  case class InitializeMenu(menu: Menu) extends DiscoveringViewsService[Unit]
+  case object CloseDrawerIfOpened extends DiscoveringViewsService[Unit]
+  case class ItemToDrawerOption(item: MenuItem) extends DiscoveringViewsService[DrawerOption]
+  case class ItemToMenuOption(item: MenuItem) extends DiscoveringViewsService[MenuOption]
 
-  def initializeMenu(menu: Menu): Free[S, Unit] =
-    Free.liftF(InitializeMenu(menu): S[Unit])
+  class Ops[S[_]](implicit s0: DiscoveringViewsService :<: S) {
 
-  def closeDrawerIfOpened: Free[S, Unit] =
-    Free.liftF(CloseDrawerIfOpened: S[Unit])
+    def initializeLayout: Free[S, Unit] =
+      Free.liftF(s0.inj(InitializeLayout))
 
-  def itemToDrawerOption(item: MenuItem): Free[S, DrawerOption] =
-    Free.liftF(ItemToDrawerOption(item): S[DrawerOption])
+    def initializeMenu(menu: Menu): Free[S, Unit] =
+      Free.liftF(s0.inj(InitializeMenu(menu)))
 
-  def itemToMenuOption(item: MenuItem): Free[S, MenuOption] =
-    Free.liftF(ItemToMenuOption(item): S[MenuOption])
+    def closeDrawerIfOpened: Free[S, Unit] =
+      Free.liftF(s0.inj(CloseDrawerIfOpened))
+
+    def itemToDrawerOption(item: MenuItem): Free[S, DrawerOption] =
+      Free.liftF(s0.inj(ItemToDrawerOption(item)))
+
+    def itemToMenuOption(item: MenuItem): Free[S, MenuOption] =
+      Free.liftF(s0.inj(ItemToMenuOption(item)))
+  }
 }
-
-object FacebookService extends DiscoveringViewsServiceFrees[DiscoveringViewsService]
-object Service extends DiscoveringViewsServiceFrees[GenericService]

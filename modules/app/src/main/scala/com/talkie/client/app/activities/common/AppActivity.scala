@@ -1,36 +1,33 @@
 package com.talkie.client.app.activities.common
 
 import android.support.v7.app.AppCompatActivity
-import com.talkie.client.app.services.ServiceInterpreterImpl
+import com.talkie.client.app.navigation.NavigationServiceTaskInterpreter
+import com.talkie.client.app.services.ServiceTaskInterpreter
+import com.talkie.client.common.services.EnrichNTOps._
 import com.talkie.client.common.components.ActivityImpl
-import com.talkie.client.common.services.Service
-import com.talkie.client.common.services.ServiceInterpreter._
+import com.talkie.client.core.facebook.FacebookServiceTaskInterpreter
 import com.talkie.client.views.settings
 
-import scalaz.concurrent.Task
+trait BaseActivity extends ActivityImpl with ServiceTaskInterpreter { self: Controller =>
 
-private[common] trait BaseActivity extends ActivityImpl { self: Controller =>
+  private val i0 = new FacebookServiceTaskInterpreter
+  private val i1 = i0 :+: new NavigationServiceTaskInterpreter
 
-  protected val viewInterpreter: PartialFunction[Service[Nothing], Task[Nothing]]
-
-  override protected implicit lazy val serviceInterpreter = new ServiceInterpreterImpl(context, this, viewInterpreter)
+  private val interpreter = i1
 
   onCreate { _ =>
-    initializeController(context.androidContext).fireAndWait()
+    initializeController(context.androidContext).foldMap(interpreter).unsafePerformSync
   }
 
   onStart {
-    moveToLoginActivityIfLoggedOut.fireAndWait()
+    moveToLoginActivityIfLoggedOut.foldMap(interpreter).unsafePerformSync
   }
 
   onResume {
-    moveToLoginActivityIfLoggedOut.fireAndWait()
+    moveToLoginActivityIfLoggedOut.foldMap(interpreter).unsafePerformSync
   }
 }
 
 trait AppActivity extends AppCompatActivity with BaseActivity { self: Controller => }
 
-trait AppSettingsActivity extends settings.AppSettingsActivity with BaseActivity { self: Controller =>
-
-  override protected val viewInterpreter = PartialFunction.empty[Service[Nothing], Task[Nothing]]
-}
+trait AppSettingsActivity extends settings.AppSettingsActivity with BaseActivity { self: Controller => }

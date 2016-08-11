@@ -7,40 +7,44 @@ import com.talkie.client.app.activities.settings.SettingsActivity
 import com.talkie.client.common.components.Activity
 import com.talkie.client.common.context.Context
 import com.talkie.client.common.events.EventListener
-import com.talkie.client.common.services.ServiceInterpreter
-import com.talkie.client.core.events.EventService._
-import com.talkie.client.core.events.EventServiceInterpreter
+import com.talkie.client.core.events.EventActions
 import com.talkie.client.core.facebook._
-import com.talkie.client.core.facebook.FacebookService._
-import ServiceInterpreter.TaskRunner
 
 import scala.reflect.ClassTag
-import scalaz.concurrent.Task
 
-private[navigation] final class NavigationActions(
-    context:                 Context,
-    activity:                Activity,
-    implicit val eventSI:    EventServiceInterpreter,
-    implicit val facebookSI: FacebookServiceInterpreter
-) {
+trait NavigationActions {
+
+  def configureNavigation(): Unit
+
+  def moveToDiscovering(): Unit
+
+  def moveToSettings(): Unit
+
+  def moveToLogin(): Unit
+
+  def moveToLoginOrElse[R](moveTo: => Unit): Unit
+}
+
+final class NavigationActionsImpl(
+    implicit
+    context:         Context,
+    activity:        Activity,
+    eventActions:    EventActions,
+    facebookActions: FacebookActions
+) extends NavigationActions {
 
   private val logger = context loggerFor this
 
   def configureNavigation(): Unit = {
-    import com.talkie.client.core.events.EventServiceInterpreter._
 
     activity.bootstrap {
-      (for {
-        _ <- registerEventListener(OnUserLoggedIn)
-        _ <- registerEventListener(OnUserLoggedOut)
-      } yield ()).fireAndWait()
+      eventActions.registerEventListener(OnUserLoggedIn)
+      eventActions.registerEventListener(OnUserLoggedOut)
     }
 
     activity.teardown {
-      (for {
-        _ <- removeEventListener(OnUserLoggedIn)
-        _ <- removeEventListener(OnUserLoggedOut)
-      } yield ()).fireAndWait()
+      eventActions.removeEventListener(OnUserLoggedIn)
+      eventActions.removeEventListener(OnUserLoggedOut)
     }
   }
 
@@ -59,14 +63,11 @@ private[navigation] final class NavigationActions(
     startActivity[LoginActivity]
   }
 
-  def moveToLoginOrElse[R](moveTo: => Task[Unit]): Task[Unit] = {
-    import com.talkie.client.core.facebook.FacebookServiceInterpreter._
-
-    checkIfLoggedToFacebook.interpret.flatMap { isLogged =>
-      logger trace s"User logged?: $isLogged"
-      if (isLogged) moveTo
-      else Task(moveToLogin())
-    }.map { _ => () }
+  def moveToLoginOrElse[R](moveTo: => Unit): Unit = {
+    val isLogged = facebookActions.checkIfLogged()
+    logger trace s"User logged?: $isLogged"
+    if (isLogged) moveTo
+    else moveToLogin()
   }
 
   private def startActivity[A <: Activity](implicit classTag: ClassTag[A]): Unit = {
@@ -77,7 +78,7 @@ private[navigation] final class NavigationActions(
   private object OnUserLoggedIn extends EventListener[LoginSucceeded] {
 
     override def handleEvent(event: LoginSucceeded) = {
-      Task(moveToDiscovering()).fireAndForget()
+      moveToDiscovering()
       true
     }
   }
@@ -85,7 +86,7 @@ private[navigation] final class NavigationActions(
   private object OnUserLoggedOut extends EventListener[LoggedOut] {
 
     override def handleEvent(event: LoggedOut) = {
-      Task(moveToLogin()).fireAndForget()
+      moveToLogin()
       true
     }
   }

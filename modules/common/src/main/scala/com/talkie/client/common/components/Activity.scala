@@ -5,15 +5,13 @@ import android.os.Bundle
 import android.view.{ Menu, MenuItem }
 import com.talkie.client.common.context.{ Context, ContextImpl }
 import com.talkie.client.common.logging.Logger
-import com.talkie.client.common.services.ServiceInterpreter
 
 import scala.collection.mutable
 
 trait Activity extends android.app.Activity {
 
-  protected val context: Context
+  protected implicit val context: Context
   protected val logger: Logger
-  protected implicit val serviceInterpreter: ServiceInterpreter
 
   // lifecycle callbacks
 
@@ -59,7 +57,7 @@ trait Activity extends android.app.Activity {
 
 trait ActivityImpl extends Activity {
 
-  override protected val context = ContextImpl(this)
+  override protected implicit val context = ContextImpl(this)
   override protected val logger = context.loggerFor(this)
 
   // lifecycle callbacks
