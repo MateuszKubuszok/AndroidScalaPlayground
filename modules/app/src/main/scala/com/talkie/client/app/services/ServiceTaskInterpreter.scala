@@ -37,12 +37,12 @@ trait ServiceTaskInterpreter { self: Activity =>
 
   private val a0: Services.A0 ~> Task = new NavigationServiceTaskInterpreter :+: d0
 
-  protected val commonInterpreter: Services.Eff ~> Task = a0
+  protected val effInterpreter: Services.Eff ~> Task = a0
 
   implicit class ViewTaskInterpreterBuilder[ViewService[_]](viewServiceTaskInterpreter: ViewService ~> Task) {
 
     type ViewEff[A] = Services.ViewEff[ViewService, A]
 
-    def intoViewEffTaskInterpreter(): ViewEff ~> Task = viewServiceTaskInterpreter :+: commonInterpreter
+    def intoViewEffTaskInterpreter(): ViewEff ~> Task = viewServiceTaskInterpreter :+: effInterpreter
   }
 }

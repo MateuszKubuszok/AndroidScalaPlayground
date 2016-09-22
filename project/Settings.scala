@@ -59,7 +59,19 @@ trait Settings {
     ),
 
     // Android
-    packagingOptions   in Android := PackagingOptions(Nil, Nil, Seq("META-INF/NOTICE.txt", "META-INF/LICENSE.txt")),
+    packagingOptions   in Android := PackagingOptions(
+      excludes = Nil,
+      pickFirsts = Seq(
+        "META-INF/NOTICE.txt",
+        "META-INF/NOTICE",
+        "META-INF/LICENSE.txt",
+        "META-INF/LICENSE"
+      ),
+      merges = Seq(
+        "AndroidManifest.xml",
+        "R.txt"
+      )
+    ),
     platformTarget     in Android := "android-23",
     minSdkVersion      in Android := "23",
     targetSdkVersion   in Android := "23",
@@ -69,22 +81,12 @@ trait Settings {
 
     // Proguard
     proguardOptions in Android ++= Seq(
-      // duplicate definition :P
-      "-dontnote android.net.http.**",
-      "-dontnote com.facebook.**",
-      "-dontnote org.apache.http.**",
       // classes that should stay
       "-keep class com.facebook.**",
       "-keep class com.talkie.client.**",
       "-keepattributes *Annotation*",
       "-keep public class * extends android.support.design.widget.CoordinatorLayout.Behavior { *; }",
-      "-keep public class * extends android.support.design.widget.ViewOffsetBehavior { *; }",
-      // removed unused
-      "-dontwarn com.google.common.**",
-      "-dontwarn org.slf4j.**",
-      "-dontwarn scala.slick.**",
-      "-dontwarn scalaz.**",
-      "-dontwarn shapeless.**"
+      "-keep public class * extends android.support.design.widget.ViewOffsetBehavior { *; }"
     ),
 
     // Libraries

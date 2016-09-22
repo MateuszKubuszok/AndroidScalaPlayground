@@ -36,6 +36,8 @@ object Services {
       a0: NavigationService :<: S
   ) {
 
+    val doNothing = Free.point[S, Unit](())
+
     val eventService = new EventService.Ops[S]
     val facebookService = new FacebookService.Ops[S]
     val locationService = new LocationService.Ops[S]
@@ -47,4 +49,21 @@ object Services {
     val navigationService = new NavigationService.Ops[S]
   }
   object EffServices extends EffServices[Eff]
+
+  class ViewEffServices[ViewEffService[_], S[_], Ops[S[_]]](
+      viewServiceOpsBuilder: (ViewEffService :<: S) => Ops[S]
+  )(
+      implicit
+      c0: EventService :<: S,
+      c1: FacebookService :<: S,
+      c2: LocationService :<: S,
+      c3: PermissionService :<: S,
+      c4: SchedulerService :<: S,
+      d0: TrackingService :<: S,
+      a0: NavigationService :<: S,
+      v0: ViewEffService :<: S
+  ) extends EffServices[S] {
+
+    val viewServices = viewServiceOpsBuilder(v0)
+  }
 }
