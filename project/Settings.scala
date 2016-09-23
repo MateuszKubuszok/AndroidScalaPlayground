@@ -70,10 +70,10 @@ trait Settings {
         "scalac-plugin.xml"
       ),
       pickFirsts = Seq(
+        "AndroidManifest.xml",
         "R.txt"
       ),
       merges = Seq(
-        "AndroidManifest.xml"
       )
     ),
     platformTarget     in Android := "android-23",

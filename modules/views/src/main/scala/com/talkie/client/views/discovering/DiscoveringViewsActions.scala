@@ -49,12 +49,12 @@ final class DiscoveringViewsActionsImpl(
 
     val toggle = new ActionBarDrawerToggle(
       activity,
-      views.layout,
+      views.drawer,
       views.toolbar,
       R.string.navigation_drawer_open,
       R.string.navigation_drawer_close
     )
-    views.layout.setDrawerListener(toggle)
+    views.drawer.setDrawerListener(toggle)
     toggle.syncState()
 
     views.navigationView.setNavigationItemSelectedListener(listener)

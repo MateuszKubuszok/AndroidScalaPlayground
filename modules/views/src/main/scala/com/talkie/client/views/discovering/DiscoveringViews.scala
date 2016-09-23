@@ -10,6 +10,7 @@ import com.talkie.client.views.{ TR, TypedFindView }
 trait DiscoveringViews {
 
   def layout: DrawerLayout
+  def drawer: DrawerLayout
   def floatingActionButton: FloatingActionButton
   def navigationView: NavigationView
   def toolbar: Toolbar
@@ -21,7 +22,8 @@ final class DiscoveringViewsImpl(
 ) extends DiscoveringViews with TypedFindView with TypedFindLayout {
 
   override protected def findViewById(id: Int) = activity.findViewById(id)
-  override lazy val layout = findLayout(TR.layout.discovering_activity)
+  override def layout = findLayout(TR.layout.discovering_activity)
+  override lazy val drawer = findView(TR.discovering_drawer)
   override lazy val floatingActionButton = findView(TR.discovering_fab)
   override lazy val navigationView = findView(TR.discovering_nav_view)
   override lazy val toolbar = findView(TR.discovering_toolbar)
