@@ -18,6 +18,6 @@ final class LoginViewsImpl(
 ) extends LoginViews with TypedFindView with TypedFindLayout {
 
   override protected def findViewById(id: Int) = activity.findViewById(id)
-  override lazy val layout = findLayout(TR.layout.activity_login)
+  override lazy val layout = findLayout(TR.layout.login_activity)
   override lazy val loginButton = findView(TR.login_button)
 }

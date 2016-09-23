@@ -35,7 +35,7 @@ final class DiscoveringViewsActionsImpl(
   private val logger = context.loggerFor(this)
 
   def initializeLayout(): Unit = {
-    activity.setContentView(R.layout.activity_discovering)
+    activity.setContentView(R.layout.discovering_activity)
 
     activity.setSupportActionBar(views.toolbar)
 

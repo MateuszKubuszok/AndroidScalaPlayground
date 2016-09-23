@@ -60,16 +60,20 @@ trait Settings {
 
     // Android
     packagingOptions   in Android := PackagingOptions(
-      excludes = Nil,
-      pickFirsts = Seq(
-        "META-INF/NOTICE.txt",
-        "META-INF/NOTICE",
+      excludes = Seq(
+        "META-INF/maven",
+        "META-INF/LICENSE",
         "META-INF/LICENSE.txt",
-        "META-INF/LICENSE"
+        "META-INF/NOTICE",
+        "META-INF/NOTICE.txt",
+        "scoverage",
+        "scalac-plugin.xml"
+      ),
+      pickFirsts = Seq(
+        "R.txt"
       ),
       merges = Seq(
-        "AndroidManifest.xml",
-        "R.txt"
+        "AndroidManifest.xml"
       )
     ),
     platformTarget     in Android := "android-23",

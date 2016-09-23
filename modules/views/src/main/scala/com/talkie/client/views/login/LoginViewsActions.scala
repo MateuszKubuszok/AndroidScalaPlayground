@@ -19,7 +19,7 @@ final class LoginViewsActionsImpl(
     views:    LoginViews
 ) extends LoginViewsActions {
 
-  def initializeLayout(): Unit = activity.setContentView(R.layout.activity_login)
+  def initializeLayout(): Unit = activity.setContentView(R.layout.login_activity)
 
   def getLoginButton: Option[LoginButton] = Option(views.loginButton)
 }

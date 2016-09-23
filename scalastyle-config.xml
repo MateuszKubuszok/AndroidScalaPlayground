@@ -1,4 +1,4 @@
-o<scalastyle>
+<scalastyle>
  <name>BackupDSL configuration</name>
  <check level="error" class="org.scalastyle.file.FileLengthChecker" enabled="true">
   <parameters>

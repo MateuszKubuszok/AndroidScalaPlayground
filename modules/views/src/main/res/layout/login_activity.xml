@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".app.activities.login.LoginActivity">
+    >
 
-  <include layout="@layout/content_login" />
+  <include
+      layout="@layout/login_content"
+      />
 
   <com.facebook.login.widget.LoginButton
       android:id="@+id/login_button"
@@ -17,6 +19,7 @@
       android:layout_height="wrap_content"
       android:layout_gravity="center"
       android:layout_marginTop="30dp"
-      android:layout_marginBottom="30dp" />
+      android:layout_marginBottom="30dp"
+      />
 
 </RelativeLayout>
