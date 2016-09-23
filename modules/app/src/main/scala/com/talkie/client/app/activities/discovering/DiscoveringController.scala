@@ -35,9 +35,7 @@ trait DiscoveringController extends Controller { self: Activity =>
 
   final def closeDrawerIfOpened = views.closeDrawerIfOpened
 
-  final def initializeMenu(menu: Menu) = for {
-    _ <- views.initializeMenu(menu)
-  } yield ()
+  final def initializeMenu(menu: Menu) = views.initializeMenu(menu)
 
   final def handleDrawerOptions(item: MenuItem) = for {
     _ <- views.itemToDrawerOption(item)
