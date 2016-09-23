@@ -16,13 +16,13 @@ Work in progress.
     * Once imported IDE can be used for editing sources, starting Android Emulator and starting Android Device Manager,
     * It might be useful to set filter `com.talkie.client` for ADM,
 
- * For running application:
+  * For running application:
  
     * Run emulator using *Tools*->*Android*->*ADV Manager* and selecting *Nexus*,
     * IN a similar manner run *Android Device Manager* to monitor device and preview logs,
     * Run `sbt` within project directory and select `project app` and run `android:run` task.
 
- * For watching logs:
+  * For watching logs:
  
     * build application in debug mode and deploy: `sbt "project app" android:debug`,
     * within IntelliJ either
@@ -33,7 +33,7 @@ Work in progress.
 
     * or use *Android Device Monitor* for the same purpose.
     
- * For debugging:
+  * For debugging:
  
     * deploy debug app as above,
     * check the right port for application using *Android Device Monitor* (numbers next to `com.talkie.client` on last
