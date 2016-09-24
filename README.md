@@ -1,4 +1,4 @@
-# Talkie Android client
+# Permanently useless Android-Scala playground
 
 Work in progress.
 
